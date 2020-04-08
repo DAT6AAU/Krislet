@@ -9,7 +9,6 @@
 //      Added the bye command
 
 
-
 //***************************************************************************
 //
 //	This interface declares functions which are used to send
@@ -34,8 +33,6 @@ interface SendCommand
     // This function sends a bye command to the server
     void bye();
 }
-
-
 
 
 interface SensorInput
