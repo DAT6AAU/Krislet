@@ -151,5 +151,4 @@ class Brain extends Thread implements SensorInput
     private char			m_side;
     volatile private boolean		m_timeOver;
     private String                      m_playMode;
-    
 }

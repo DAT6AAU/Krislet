@@ -18,7 +18,7 @@ Memory: (Helper class for handling VisualInfo)
 ObjectInfo: (Classes for data storage, visual objects)
 
 
-SensorInput: (Interface: method to send see and recieve hear)
+SensorInput: (Interface: method to send see and receive here)
 
 SoccerParams: (Client parameters)
 
