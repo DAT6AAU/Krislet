@@ -233,7 +233,8 @@ class Krislet implements SendCommand
     private void parseSensorInformation(String message)
 	throws IOException
     {
-		// First check kind of informationMatcher m=message_pattern.matcher(message);
+		// First check kind of information
+		Matcher m = message_pattern.matcher(message);
 		if(!m.matches())
 	    {
 			throw new IOException(message);
