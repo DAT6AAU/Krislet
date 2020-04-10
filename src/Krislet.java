@@ -19,7 +19,7 @@ import java.util.regex.*;
 //	This is main object class
 //
 //***************************************************************************
-class Krislet implements SendCommand
+class Krislet
 {
     //===========================================================================
     // Initialization member functions
@@ -325,7 +325,7 @@ class Krislet implements SendCommand
     private InetAddress	m_host;			// Server address
     private int	m_port;			// server port
     private String m_team;			// team name
-    private SensorInput	m_brain;		// input for sensor information
+    private Brain	m_brain;		// input for sensor information
     private boolean m_playing;              // controls the MainLoop
     private Pattern message_pattern = Pattern.compile("^\\((\\w+?)\\s.*");
     private Pattern hear_pattern = Pattern.compile("^\\(hear\\s(\\w+?)\\s(\\w+?)\\s(.*)\\).*");
