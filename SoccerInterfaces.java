@@ -34,7 +34,6 @@ interface SendCommand
     void bye();
 }
 
-
 interface SensorInput
 {
     //---------------------------------------------------------------------------
