@@ -71,7 +71,7 @@ class Brain extends Thread
 
 		while( !m_timeOver )
 		{
-			object = m_memory.getObject("ball");
+			object = m_memory.getBallInfo();
 			if( object == null )
 			{
 				// If you don't know where is ball then find it
@@ -98,11 +98,11 @@ class Brain extends Thread
 				// so look for goal
 				if( m_side == 'l' )
 				{
-					object = m_memory.getObject("goal r");
+					object = m_memory.getGoalObj('r');
 				}
 				else
 				{
-					object = m_memory.getObject("goal l");
+					object = m_memory.getGoalObj('l');
 				}
 
 				if( object == null )

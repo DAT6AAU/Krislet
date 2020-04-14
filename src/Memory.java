@@ -22,26 +22,31 @@ class Memory
 		m_info = info;
     }
 
-    //---------------------------------------------------------------------------
-    // This function looks for specified object
-    public ObjectInfo getObject(String name) 
-    {
+    /** @param side: 'r' or 'l' */
+    public GoalInfo getGoalObj(char side){
+
 		if(m_info == null)
 		{
 			waitForNewInfo();
 		}
 
-		for(int c = 0 ; c < m_info.m_objects.size() ; c ++)
-	    {
-			ObjectInfo object = (ObjectInfo)m_info.m_objects.elementAt(c);
-			if(object.m_type.compareTo(name) == 0)
-			{
-		    	return object;
-		    }
-	    }												 
+    	for(GoalInfo goalObj : m_info.getGoalList()){
+    		if(goalObj.getSide() == side)
+    			return goalObj;
+		}
 
-		return null;
-    }
+    	return null;
+	}
+
+	public BallInfo getBallInfo(){
+
+		if(m_info == null)
+		{
+			waitForNewInfo();
+		}
+
+    	return m_info.getBallInfo();
+	}
 
     //---------------------------------------------------------------------------
     // This function waits for new visual information

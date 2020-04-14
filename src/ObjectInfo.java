@@ -18,7 +18,7 @@
 //***************************************************************************
 class ObjectInfo
 {
-	public String m_type;
+	public ObjectType m_type;
 	public float m_distance;
 	public float m_direction;
 	public float m_distChange;
@@ -26,7 +26,7 @@ class ObjectInfo
 
 	//===========================================================================
 	// Initialization member functions
-	public ObjectInfo(String type)
+	public ObjectInfo(ObjectType type)
 	{
 		 m_type = type;
 	}
@@ -51,9 +51,28 @@ class ObjectInfo
 		return m_dirChange;
 	}
 
-	public String getType()
+	public ObjectType getType()
 	{
 		return m_type;
+	}
+}
+
+enum ObjectType{
+	BALL("ball"), FLAG("flag"), GOAL("goal"), LINE("line"), PLAYER("player");
+
+	private String identifier;
+
+	ObjectType(String identifier) {
+		this.identifier = identifier;
+	}
+
+	public static ObjectType getTypeFromIdentifier(String identifier){
+		for(ObjectType type : ObjectType.values()){
+			if(type.identifier == identifier)
+				return type;
+		}
+
+		throw new IllegalArgumentException("Did not receive a valid identifier!");
 	}
 }
 
@@ -74,12 +93,12 @@ class PlayerInfo extends ObjectInfo
 	// Initialization member functions
 	public PlayerInfo()
 	{
-		super("player");
+		super(ObjectType.PLAYER);
 	}
 
 	public PlayerInfo(String team, int number, boolean is_goalie)
 	{
-		super("player");
+		super(ObjectType.PLAYER);
 		m_teamName = team;
 		m_uniformName = number;
 		m_goalie = is_goalie;
@@ -89,7 +108,7 @@ class PlayerInfo extends ObjectInfo
 
 	public PlayerInfo(String team, int number, float bodyDir, float headDir)
 	{
-		super("player");
+		super(ObjectType.PLAYER);
 		m_teamName = team;
 		m_uniformName = number;
 		m_bodyDir = bodyDir;
@@ -129,13 +148,14 @@ class GoalInfo extends ObjectInfo
 	// Initialization member functions
 	public GoalInfo()
 	{
-		super("goal");
+		super(ObjectType.GOAL);
 		m_side = ' ';
 	}
 
 	public GoalInfo(char side)
 	{
-		super("goal " + side);
+		//super("goal " + side); //TODO MAKE SURE WORKS
+		super( ObjectType.FLAG);
 		m_side = side;
 	}
 
@@ -156,7 +176,7 @@ class BallInfo extends ObjectInfo
 	// Initialization member functions
 	public BallInfo()
   {
-	super("ball");
+	super(ObjectType.BALL);
   }
 }
 
@@ -177,7 +197,7 @@ class FlagInfo extends ObjectInfo
 	// Initialization member functions
 	public FlagInfo()
 	{
-		super("flag");
+		super(ObjectType.FLAG);
 		m_type = ' ';
 		m_pos1 = ' ';
 		m_pos2 = ' ';
@@ -185,20 +205,9 @@ class FlagInfo extends ObjectInfo
 		m_out = false;
 	}
 
-	public FlagInfo(String flagType, char type, char pos1, char pos2,
-				  int num, boolean out)
-	{
-		super(flagType);
-		m_type = type;
-		m_pos1 = pos1;
-		m_pos2 = pos2;
-		m_num = num;
-		m_out = out;
-	}
-
 	public FlagInfo(char type, char pos1, char pos2, int num, boolean out)
 	{
-		super("flag");
+		super(ObjectType.FLAG);
 		m_type = type;
 		m_pos1 = pos1;
 		m_pos2 = pos2;
@@ -220,12 +229,12 @@ class LineInfo extends ObjectInfo
 	// Initialization member functions
 	public LineInfo()
 	{
-		super("line");
+		super(ObjectType.LINE);
 	}
 
 	public LineInfo(char kind)
 	{
-		super("line");
+		super(ObjectType.LINE);
 		m_kind = kind;
 	}
 }

@@ -36,50 +36,47 @@ class VisualInfo
     private static Pattern p_lrc = Pattern.compile("^(l|r|c)$");
 
     private int	m_time;
-    public Vector<ObjectInfo> m_objects;
     public String m_message;
     
     // Split objects into specific lists
-    private Vector<?> m_ball_list;
-    private Vector<?> m_player_list;
-    private Vector<?> m_flag_list;
-    private Vector<?> m_goal_list;
-    private Vector<?> m_line_list;
+    private BallInfo m_ball_info;
+    private Vector<PlayerInfo> m_player_list;
+    private Vector<FlagInfo> m_flag_list;
+    private Vector<GoalInfo> m_goal_list;
+    private Vector<LineInfo> m_line_list;
     
     // Constructor for 'see' information
     public VisualInfo(String info)
     {
 	info.trim();
 	m_message = info;
-	m_player_list = new Vector<Object>(22);
-	m_ball_list = new Vector<Object>(1);
-	m_goal_list = new Vector<Object>(10);
-	m_line_list = new Vector<Object>(20);
-	m_flag_list = new Vector<Object>(60);
-	m_objects = new Vector<ObjectInfo>(113);
+	m_player_list = new Vector<>(22);
+	m_goal_list = new Vector<>(10);
+	m_line_list = new Vector<>(20);
+	m_flag_list = new Vector<>(60);
     }
     
-    public Vector<?> getBallList()
+    public BallInfo getBallInfo()
     {
-	    return m_ball_list;
+	    return m_ball_info;
     }
     
-    public Vector<?> getPlayerList()
+    public Vector<PlayerInfo> getPlayerList()
     {
 	    return m_player_list;
     }
     
-    public Vector<?> getGoalList()
+    public Vector<GoalInfo> getGoalList()
     {
 	    return m_goal_list;
     }
     
-    public Vector<?> getLineList()
+    public Vector<LineInfo> getLineList()
     {
 	    return m_line_list;
     }
     
-    public Vector<?> getFlagList()
+    public Vector<FlagInfo> getFlagList()
     {
 	    return m_flag_list;
     }
@@ -99,11 +96,10 @@ class VisualInfo
 	    ObjectInfo objInfo;
 	
 	    m_player_list.clear();
-	    m_ball_list.clear();
+	    m_ball_info = null;
 	    m_goal_list.clear();
 	    m_line_list.clear();
 	    m_flag_list.clear();
-	    m_objects.clear();
 	    //Parse all the message, and obtain the three main parts
 	    //(message type, time, and Object Info)
 	    Pattern pattern = Pattern.compile("^\\((\\w+?)\\s(\\d+?)\\s(.*)\\).*");
@@ -129,7 +125,7 @@ class VisualInfo
 	    {
 	        objInfo = createNewObject(Objects_m.group(1));
 	        //if(objInfo.valid())
-	        m_objects.addElement(objInfo);
+            putObjInfoIntoList(objInfo);
 	        // this splits the string containing the other info about
 	        // the object (distance, direction, etc.)
 	        String[] relPos=m_info_p.split(Objects_m.group(2));
@@ -147,6 +143,22 @@ class VisualInfo
 	            default: objInfo.m_direction = Float.valueOf(relPos[0]).floatValue(); break;
 	        }
 	    }
+    }
+
+    /** Takes an ObjectInfo and adds it to the list matching its type. */
+    private void putObjInfoIntoList(ObjectInfo obj){
+        if(obj instanceof BallInfo)
+            m_ball_info = (BallInfo)obj;
+        else if(obj instanceof FlagInfo)
+            m_flag_list.add((FlagInfo)obj);
+        else if(obj instanceof GoalInfo)
+            m_goal_list.add((GoalInfo)obj);
+        else if(obj instanceof LineInfo)
+            m_line_list.add((LineInfo)obj);
+        else if(obj instanceof PlayerInfo)
+            m_player_list.add((PlayerInfo)obj);
+        else
+            throw new IllegalArgumentException("VisualInfo: putObjInfoIntoList(ObjectInfo): did not recognize type!");
     }
     
     //===========================================================================
@@ -301,7 +313,7 @@ class VisualInfo
                 if (pos2 != ' ') {flagType = flagType + " " + pos2;}
                 // Implementing flags like this, allows one to specifically find a
                 // particular flag (i.e. "flag c", or "flag p l t")
-                objInfo = new FlagInfo(flagType, type, pos1, pos2, num, out);
+                objInfo = new FlagInfo(type, pos1, pos2, num, out);
             }
         }
         return objInfo;
