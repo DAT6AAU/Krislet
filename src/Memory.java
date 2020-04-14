@@ -6,9 +6,11 @@
 
 class Memory 
 {
-    //---------------------------------------------------------------------------
-    // This constructor:
-    // - initializes all variables
+	//===========================================================================
+	// Private members
+	volatile private VisualInfo	m_info;	// place where all information is stored
+	final static int SIMULATOR_STEP = 100;
+
     public Memory()
     {
     }
@@ -60,9 +62,4 @@ class Memory
 			}
 	    }
     }
-
-    //===========================================================================
-    // Private members
-    volatile private VisualInfo	m_info;	// place where all information is stored
-    final static int SIMULATOR_STEP = 100;
 }

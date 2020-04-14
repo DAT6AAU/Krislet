@@ -15,8 +15,4 @@ Memory: (Helper class for handling VisualInfo)
 
 ObjectInfo: (Classes for data storage, visual objects)
 
-SensorInput: (Interface: method to send see and receive here)
-
-SoccerParams: (Client parameters)
-
 http://www.nmai.ca/research-projects/agent-imitation/software-agent-imitation---downloads-1/software-agent-imitation---datasets---krislet

@@ -13,6 +13,12 @@ import java.util.regex.*;
 
 class Brain extends Thread
 {
+	private Krislet m_krislet;			// robot which is controled by this brain
+	private Memory m_memory;				// place where all information is stored
+	private char m_side;
+	volatile private boolean m_timeOver;
+	private String m_playMode;
+
     //---------------------------------------------------------------------------
     // This constructor:
     // - stores connection to krislet
@@ -114,7 +120,7 @@ class Brain extends Thread
 			// two commands in one cycle.
 			try
 			{
-				Thread.sleep(2*SoccerParams.simulator_step);
+				Thread.sleep(2*Memory.SIMULATOR_STEP);
 			}
 			catch(Exception e)
 			{
@@ -127,8 +133,6 @@ class Brain extends Thread
     //===========================================================================
     // Here are suporting functions for implement logic
 
-    //===========================================================================
-    // Implementation of SensorInput Interface
 
     //---------------------------------------------------------------------------
     // This function sends see information
@@ -152,12 +156,4 @@ class Brain extends Thread
 	        m_timeOver = true;
 	    }
     }
-
-    //===========================================================================
-    // Private members
-    private Krislet m_krislet;			// robot which is controled by this brain
-    private Memory m_memory;				// place where all information is stored
-    private char m_side;
-    volatile private boolean m_timeOver;
-    private String m_playMode;
 }

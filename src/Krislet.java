@@ -21,8 +21,17 @@ import java.util.regex.*;
 //***************************************************************************
 class Krislet
 {
-    //===========================================================================
-    // Initialization member functions
+	private DatagramSocket m_socket;		// Socket to communicate with server
+	private InetAddress	m_host;			// Server address
+	private int	m_port;			// server port
+	private String m_team;			// team name
+	private Brain	m_brain;		// input for sensor information
+	private boolean m_playing;              // controls the MainLoop
+	private Pattern message_pattern = Pattern.compile("^\\((\\w+?)\\s.*");
+	private Pattern hear_pattern = Pattern.compile("^\\(hear\\s(\\w+?)\\s(\\w+?)\\s(.*)\\).*");
+	//private Pattern coach_pattern = Pattern.compile("coach");
+	// constants
+	private static final int MSG_SIZE = 4096;	// Size of socket buffer
 
     //---------------------------------------------------------------------------
     // The main appllication function.
@@ -317,20 +326,4 @@ class Krislet
 		}
 		return new String(buffer);
     }
-
-    //===========================================================================
-    // Private members
-    // class members
-    private DatagramSocket m_socket;		// Socket to communicate with server
-    private InetAddress	m_host;			// Server address
-    private int	m_port;			// server port
-    private String m_team;			// team name
-    private Brain	m_brain;		// input for sensor information
-    private boolean m_playing;              // controls the MainLoop
-    private Pattern message_pattern = Pattern.compile("^\\((\\w+?)\\s.*");
-    private Pattern hear_pattern = Pattern.compile("^\\(hear\\s(\\w+?)\\s(\\w+?)\\s(.*)\\).*");
-    //private Pattern coach_pattern = Pattern.compile("coach");
-    // constants
-    private static final int MSG_SIZE = 4096;	// Size of socket buffer
-
 }

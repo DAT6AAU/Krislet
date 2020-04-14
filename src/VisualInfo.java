@@ -22,6 +22,19 @@ import java.util.regex.*;
 
 class VisualInfo
 {
+    private static Pattern m_info_p = Pattern.compile("\\s");
+    private static final int p_flags = Pattern.CASE_INSENSITIVE;
+    private static Pattern p_player = Pattern.compile("^(player|p)$",p_flags);
+    private static Pattern p_ball = Pattern.compile("^(ball|b)$",p_flags);
+    private static Pattern p_goal = Pattern.compile("^(goal|g)$",p_flags);
+    private static Pattern p_flag = Pattern.compile("^(flag|f)$",p_flags);
+    private static Pattern p_line = Pattern.compile("^(line|l)$",p_flags);
+    private static Pattern p_quote = Pattern.compile("\"");
+    private static Pattern p_type = Pattern.compile("^(p|g)$");
+    private static Pattern p_number = Pattern.compile("^\\d{2}$");
+    private static Pattern p_lr = Pattern.compile("^(l|r)$");
+    private static Pattern p_lrc = Pattern.compile("^(l|r|c)$");
+
     private int	m_time;
     public Vector<ObjectInfo> m_objects;
     public String m_message;
@@ -293,18 +306,4 @@ class VisualInfo
         }
         return objInfo;
     }
-    //===========================================================================
-    // Private members
-    private static Pattern m_info_p = Pattern.compile("\\s");
-    private static final int p_flags = Pattern.CASE_INSENSITIVE;
-    private static Pattern p_player = Pattern.compile("^(player|p)$",p_flags);
-    private static Pattern p_ball = Pattern.compile("^(ball|b)$",p_flags);
-    private static Pattern p_goal = Pattern.compile("^(goal|g)$",p_flags);
-    private static Pattern p_flag = Pattern.compile("^(flag|f)$",p_flags);
-    private static Pattern p_line = Pattern.compile("^(line|l)$",p_flags);
-    private static Pattern p_quote = Pattern.compile("\"");
-    private static Pattern p_type = Pattern.compile("^(p|g)$");
-    private static Pattern p_number = Pattern.compile("^\\d{2}$");
-    private static Pattern p_lr = Pattern.compile("^(l|r)$");
-    private static Pattern p_lrc = Pattern.compile("^(l|r|c)$");
 }
