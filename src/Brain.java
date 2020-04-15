@@ -11,27 +11,25 @@
 import java.lang.Math;
 import java.util.regex.*;
 
-class Brain extends Thread
-{
+class Brain extends Thread {
     private Krislet m_krislet; // robot which is controlled by this brain
-	private Memory m_memory; // place where all information is stored
-	private char m_side;
-	volatile private boolean m_timeOver;
-	private String m_playMode;
+    private Memory m_memory; // place where all information is stored
+    private char m_side;
+    volatile private boolean m_timeOver;
+    private String m_playMode;
 
     //---------------------------------------------------------------------------
     // - stores connection to krislet
     // - starts thread for this object
-    public Brain(Krislet krislet, String team, char side, int number, String playMode)
-    {
-		m_timeOver = false;
-		m_krislet = krislet;
-		m_memory = new Memory();
-		//m_team = team;
-		m_side = side;
-		// m_number = number;
-		m_playMode = playMode;
-		start();
+    public Brain(Krislet krislet, String team, char side, int number, String playMode) {
+        m_timeOver = false;
+        m_krislet = krislet;
+        m_memory = new Memory();
+        //m_team = team;
+        m_side = side;
+        // m_number = number;
+        m_playMode = playMode;
+        start();
     }
 
     //---------------------------------------------------------------------------
@@ -58,107 +56,82 @@ class Brain extends Thread
     // Move to a place on my side on a kick_off
     // ************************************************
 
-    public void run()
-    {
-		ObjectInfo ball;
-		ObjectInfo goal_opponent;
+    public void run() {
+        ObjectInfo ball;
+        ObjectInfo goal_opponent;
 
-		String nextCommand; // todo maybe an enum?
+        String nextCommand; // todo maybe an enum?
 
-		// before kickoff
+        // before kickoff
         setupFormation();
 
-
         // kickoff
-		while (!m_timeOver)
-		{
+        while (!m_timeOver) {
             nextCommand = null;
 
-			ball = m_memory.getBallInfo();
-			if (ball == null)
-			{
-				// If you don't know where is ball then find it
+            ball = m_memory.getBallInfo();
+            if (ball == null) {
+                // If you don't know where is ball then find it
                 findObject(ball);
-			}
-			else if (ball.m_distance > 1.0)
-			{
-				// If ball is too far then
-				// turn to ball or
-				// if we have correct direction then go to ball
-				if (ball.m_direction != 0)
-				{
-				    turnTowards(ball);
-				}
-				else
-				{
-					m_krislet.dash(10 * ball.m_distance);
-				}
-			}
-			else
-			{
-				// We know where the ball is and we can kick it
-				// so look for goal
-				if (m_side == 'l')
-				{
-					goal_opponent = m_memory.getGoalObj('r');
-				}
-				else
-				{
-					goal_opponent = m_memory.getGoalObj('l');
-				}
-
-				if (goal_opponent == null)
-				{
-				    findObject(goal_opponent);
-    			}
-				else
-                {
-					m_krislet.kick(100, goal_opponent.m_direction);
+            } else if (ball.m_distance > 1.0) {
+                // If ball is too far then
+                // turn to ball or
+                // if we have correct direction then go to ball
+                if (ball.m_direction != 0) {
+                    turnTowards(ball);
+                } else {
+                    m_krislet.dash(10 * ball.m_distance);
                 }
-			}
+            } else {
+                // We know where the ball is and we can kick it
+                // so look for goal
+                if (m_side == 'l') {
+                    goal_opponent = m_memory.getGoalObj('r');
+                } else {
+                    goal_opponent = m_memory.getGoalObj('l');
+                }
 
-			// sleep one step to ensure that we will not send
-			// two commands in one cycle.
+                if (goal_opponent == null) {
+                    findObject(goal_opponent);
+                } else {
+                    m_krislet.kick(100, goal_opponent.m_direction);
+                }
+            }
 
-            if (nextCommand != null){
+            // sleep one step to ensure that we will not send
+            // two commands in one cycle.
+
+            if (nextCommand != null) {
                 //do the thing
             }
             waitForNextCycle();
-		}
+        }
 
 
-		// after kickoff
-		m_krislet.bye();
+        // after kickoff
+        m_krislet.bye();
     }
 
-    private void setupFormation()
-    {
+    private void setupFormation() {
         // Place player randomly on field TODO: change
-        if(Pattern.matches("^before_kick_off.*",m_playMode))
-        {
+        if (Pattern.matches("^before_kick_off.*", m_playMode)) {
             m_krislet.move(-Math.random() * 52.5, 34 - Math.random() * 68.0);
         }
     }
 
-    private void findObject(ObjectInfo obj)
-    {
+    private void findObject(ObjectInfo obj) {
         m_krislet.turn(40);
         m_memory.waitForNewInfo(); // todo maybe remove. should only be called in memory
     }
 
-    private void turnTowards(ObjectInfo obj)
-    {
+    private void turnTowards(ObjectInfo obj) {
         m_krislet.turn(obj.m_direction);
     }
 
-    private void waitForNextCycle()
-    {
-        try
-        {
-            Thread.sleep(2*Memory.SIMULATOR_STEP);
-        }
-        catch (Exception e)
-        {
+    private void waitForNextCycle() {
+        try {
+            Thread.sleep(2 * Memory.SIMULATOR_STEP);
+        } catch (Exception e) {
 
         }
     }
@@ -168,8 +141,7 @@ class Brain extends Thread
 
     //---------------------------------------------------------------------------
     // This function sends see information
-    public void see(VisualInfo info)
-    {
+    public void see(VisualInfo info) {
         m_memory.store(info);
     }
 
@@ -180,10 +152,8 @@ class Brain extends Thread
 
     //---------------------------------------------------------------------------
     // This function receives hear information from referee
-    public void hear(int time, String message)
-    {
-        if (message.compareTo("time_over") == 0)
-        {
+    public void hear(int time, String message) {
+        if (message.compareTo("time_over") == 0) {
             m_timeOver = true;
         }
     }

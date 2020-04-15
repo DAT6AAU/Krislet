@@ -7,7 +7,7 @@ public class Runner {
 
         int numberOfPlayers = 11;
 
-        for(int i = 0; i < numberOfPlayers; i++){
+        for (int i = 0; i < numberOfPlayers; i++) {
             KrisletThread player = new KrisletThread();
             player.start();
         }
@@ -18,9 +18,9 @@ class KrisletThread extends Thread {
 
     public void run() {
         System.out.println("Starting player!");
-        String hostName = new String("");
+        String hostName = "";
         int port = 6000;
-        String team = new String("Krislet");
+        String team = "Krislet";
         Krislet player = null;
         try {
             player = new Krislet(InetAddress.getByName(hostName),
