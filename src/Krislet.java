@@ -34,7 +34,7 @@ class Krislet {
     private static final int MSG_SIZE = 4096;    // Size of socket buffer
 
     //---------------------------------------------------------------------------
-    // The main appllication function.
+    // The main application function.
     // Command line format:
     //
     // krislet [-parameter value]

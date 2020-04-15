@@ -67,7 +67,6 @@ enum ObjectType {
     }
 }
 
-//***************************************************************************
 class PlayerInfo extends ObjectInfo {
     String m_teamName = "";
     int m_uniformName = 0; // recognise 0 as not being able to see number
@@ -113,7 +112,6 @@ class PlayerInfo extends ObjectInfo {
     }
 }
 
-//***************************************************************************
 class GoalInfo extends ObjectInfo {
     private char m_side;
 
@@ -133,14 +131,12 @@ class GoalInfo extends ObjectInfo {
     }
 }
 
-//***************************************************************************
 class BallInfo extends ObjectInfo {
     public BallInfo() {
         super(ObjectType.BALL);
     }
 }
 
-//***************************************************************************
 class FlagInfo extends ObjectInfo {
     char m_type;  // p|g
     char m_pos1;  // t|b|l|c|r
@@ -167,7 +163,6 @@ class FlagInfo extends ObjectInfo {
     }
 }
 
-//***************************************************************************
 class LineInfo extends ObjectInfo {
     char m_kind;  // l|r|t|b
 

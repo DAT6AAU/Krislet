@@ -98,12 +98,12 @@ class Brain extends Thread {
                 }
             }
 
-            // sleep one step to ensure that we will not send
-            // two commands in one cycle.
-
             if (nextCommand != null) {
                 //do the thing
             }
+
+            // sleep one step to ensure that we will not send
+            // two commands in one cycle.
             waitForNextCycle();
         }
 

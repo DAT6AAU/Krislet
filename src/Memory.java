@@ -5,8 +5,6 @@
 //
 
 class Memory {
-    //===========================================================================
-    // Private members
     volatile private VisualInfo m_info;    // place where all information is stored
     final static int SIMULATOR_STEP = 100;
 
