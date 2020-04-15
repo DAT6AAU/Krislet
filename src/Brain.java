@@ -60,20 +60,20 @@ class Brain extends Thread
 
     public void run()
     {
-		ObjectInfo currentObjectInfo;
-
 		ObjectInfo ball;
 		ObjectInfo goal_opponent;
 
+		String nextCommand; // todo maybe an enum?
 
-		// Place player randomly on field TODO: change
-		if(Pattern.matches("^before_kick_off.*",m_playMode))
-		{
-            m_krislet.move(-Math.random() * 52.5, 34 - Math.random() * 68.0);
-        }
+		// before kickoff
+        setupFormation();
 
+
+        // kickoff
 		while (!m_timeOver)
 		{
+            nextCommand = null;
+
 			ball = m_memory.getBallInfo();
 			if (ball == null)
 			{
@@ -120,60 +120,71 @@ class Brain extends Thread
 			// sleep one step to ensure that we will not send
 			// two commands in one cycle.
 
+            if (nextCommand != null){
+                //do the thing
+            }
             waitForNextCycle();
-
 		}
+
+
+		// after kickoff
 		m_krislet.bye();
     }
 
-
-
-
-    //===========================================================================
-    // Here are supporting functions for implement logic
-
-    //---------------------------------------------------------------------------
-    // This function sends see information
-    public void see(VisualInfo info)
+    private void setupFormation()
     {
-	    m_memory.store(info);
-    }
-
-    //---------------------------------------------------------------------------
-    // This function receives hear information from player
-    public void hear(int time, int direction, String message)
-    {
-    }
-
-    //---------------------------------------------------------------------------
-    // This function receives hear information from referee
-    public void hear(int time, String message)
-    {						 
-	    if(message.compareTo("time_over") == 0)
-	    {
-	        m_timeOver = true;
-	    }
+        // Place player randomly on field TODO: change
+        if(Pattern.matches("^before_kick_off.*",m_playMode))
+        {
+            m_krislet.move(-Math.random() * 52.5, 34 - Math.random() * 68.0);
+        }
     }
 
     private void findObject(ObjectInfo obj)
     {
         m_krislet.turn(40);
-        m_memory.waitForNewInfo();
+        m_memory.waitForNewInfo(); // todo maybe remove. should only be called in memory
     }
 
-    public void turnTowards(ObjectInfo obj)
+    private void turnTowards(ObjectInfo obj)
     {
         m_krislet.turn(obj.m_direction);
     }
 
-    private void waitForNextCycle() {
+    private void waitForNextCycle()
+    {
         try
         {
             Thread.sleep(2*Memory.SIMULATOR_STEP);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
 
+        }
+    }
+
+
+    /// check if used
+
+    //---------------------------------------------------------------------------
+    // This function sends see information
+    public void see(VisualInfo info)
+    {
+        m_memory.store(info);
+    }
+
+    //---------------------------------------------------------------------------
+    // This function receives hear information from player
+    public void hear(int time, int direction, String message) {
+    }
+
+    //---------------------------------------------------------------------------
+    // This function receives hear information from referee
+    public void hear(int time, String message)
+    {
+        if (message.compareTo("time_over") == 0)
+        {
+            m_timeOver = true;
         }
     }
 

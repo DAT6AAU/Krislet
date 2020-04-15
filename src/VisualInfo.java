@@ -128,7 +128,7 @@ class VisualInfo
             putObjInfoIntoList(objInfo);
 	        // this splits the string containing the other info about
 	        // the object (distance, direction, etc.)
-	        String[] relPos=m_info_p.split(Objects_m.group(2));
+	        String[] relPos = m_info_p.split(Objects_m.group(2));
 	        // append the info depending on the number of additional attributes.
 	        int len = relPos.length;
 	        switch (len)

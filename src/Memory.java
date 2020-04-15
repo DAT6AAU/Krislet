@@ -25,14 +25,14 @@ class Memory
     /** @param side: 'r' or 'l' */
     public GoalInfo getGoalObj(char side){
 
-		if(m_info == null)
+		if (m_info == null)
 		{
 			waitForNewInfo();
 		}
 
-    	for(GoalInfo goalObj : m_info.getGoalList()){
-    		if(goalObj.getSide() == side)
-    			return goalObj;
+    	for (GoalInfo goalObj : m_info.getGoalList()){
+    		if (goalObj.getSide() == side){
+    			return goalObj;}
 		}
 
     	return null;
@@ -40,7 +40,7 @@ class Memory
 
 	public BallInfo getBallInfo(){
 
-		if(m_info == null)
+		if (m_info == null)
 		{
 			waitForNewInfo();
 		}
@@ -55,14 +55,14 @@ class Memory
 		// first remove old info
 		m_info = null;
 		// now wait until we get new copy
-		while(m_info == null)
+		while (m_info == null)
 	    {
-			// We can get information faster then 75 miliseconds
+			// We can get information faster then 75 milliseconds
 			try
 			{
 				Thread.sleep(SIMULATOR_STEP);
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 			}
 	    }

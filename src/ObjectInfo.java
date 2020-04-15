@@ -65,8 +65,8 @@ enum ObjectType{
 	}
 
 	public static ObjectType getTypeFromIdentifier(String identifier){
-		for(ObjectType type : ObjectType.values()){
-			if(type.identifier == identifier)
+		for (ObjectType type : ObjectType.values()){
+			if (type.identifier == identifier)
 				return type;
 		}
 
@@ -78,7 +78,7 @@ enum ObjectType{
 class PlayerInfo extends ObjectInfo
 {
 	String  m_teamName = "";
-	int m_uniformName = 0;        // recognise 0 as not being able to see number
+	int m_uniformName = 0; // recognise 0 as not being able to see number
 	float m_bodyDir;
 	float m_headDir;
 	boolean m_goalie = false;
