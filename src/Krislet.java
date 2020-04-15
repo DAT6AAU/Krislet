@@ -21,12 +21,12 @@ import java.util.regex.*;
 //***************************************************************************
 class Krislet
 {
-	private DatagramSocket m_socket;		// Socket to communicate with server
-	private InetAddress	m_host;			// Server address
-	private int	m_port;			// server port
-	private String m_team;			// team name
-	private Brain	m_brain;		// input for sensor information
-	private boolean m_playing;              // controls the MainLoop
+	private DatagramSocket m_socket; // Socket to communicate with server
+	private InetAddress	m_host;	// Server address
+	private int	m_port;	// server port
+	private String m_team;	// team name
+	private Brain	m_brain; // input for sensor information
+	private boolean m_playing; // controls the MainLoop
 	private Pattern message_pattern = Pattern.compile("^\\((\\w+?)\\s.*");
 	private Pattern hear_pattern = Pattern.compile("^\\(hear\\s(\\w+?)\\s(\\w+?)\\s(.*)\\).*");
 	//private Pattern coach_pattern = Pattern.compile("coach");
@@ -195,7 +195,7 @@ class Krislet
     }
 
     //---------------------------------------------------------------------------
-    // This function sends chage_view command to the server
+    // This function sends change_view command to the server
     public void changeView(String angle, String quality)
     {
 		send("(change_view " + angle + " " + quality + ")");
@@ -250,7 +250,7 @@ class Krislet
 	    }
 		if(m.group(1).compareTo("see") == 0)
 	    {
-			VisualInfo	info = new VisualInfo(message);
+			VisualInfo info = new VisualInfo(message);
 			info.parse();
 			m_brain.see(info);
 	    }
@@ -266,7 +266,7 @@ class Krislet
 	throws IOException
     {
 		// get hear information
-		Matcher m=hear_pattern.matcher(message);
+		Matcher m = hear_pattern.matcher(message);
 		int	time;
 		String sender;
 		String uttered;

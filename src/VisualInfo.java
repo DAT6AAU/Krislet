@@ -48,12 +48,12 @@ class VisualInfo
     // Constructor for 'see' information
     public VisualInfo(String info)
     {
-	info.trim();
-	m_message = info;
-	m_player_list = new Vector<>(22);
-	m_goal_list = new Vector<>(10);
-	m_line_list = new Vector<>(20);
-	m_flag_list = new Vector<>(60);
+        info.trim();
+        m_message = info;
+        m_player_list = new Vector<>(22);
+        m_goal_list = new Vector<>(10);
+        m_line_list = new Vector<>(20);
+        m_flag_list = new Vector<>(60);
     }
     
     public BallInfo getBallInfo()
@@ -104,7 +104,7 @@ class VisualInfo
 	    //(message type, time, and Object Info)
 	    Pattern pattern = Pattern.compile("^\\((\\w+?)\\s(\\d+?)\\s(.*)\\).*");
 	    Matcher matcher = pattern.matcher(m_message);
-	    if(!matcher.matches())
+	    if (!matcher.matches())
 	    {
 		    throw new IOException(m_message);
 	    }
@@ -112,7 +112,7 @@ class VisualInfo
 	    m_time = Integer.parseInt(matcher.group(2));
 	    m_objectsString = matcher.group(3);
 	    //Don't parse information if it's not 'see' information
-	    if(m_type.compareTo("see") != 0)
+	    if (m_type.compareTo("see") != 0)
         {
 	        return;
         }
@@ -121,7 +121,7 @@ class VisualInfo
 	    Pattern Objects_p = Pattern.compile("\\(\\((.*?)\\)\\s(.*?)\\)");
 	    Matcher Objects_m = Objects_p.matcher(m_objectsString);
 	    // For each match, create the object, and append info
-	    while(Objects_m.find())
+	    while (Objects_m.find())
 	    {
 	        objInfo = createNewObject(Objects_m.group(1));
 	        //if(objInfo.valid())
@@ -131,34 +131,41 @@ class VisualInfo
 	        String[] relPos=m_info_p.split(Objects_m.group(2));
 	        // append the info depending on the number of additional attributes.
 	        int len = relPos.length;
-	        switch(len)
+	        switch (len)
             {
-	            case 6: ((PlayerInfo)(objInfo)).m_headDir = Float.valueOf(relPos[5]).floatValue();
-	            case 5: ((PlayerInfo)(objInfo)).m_bodyDir = Float.valueOf(relPos[4]).floatValue();
-	            case 4: objInfo.m_dirChange = Float.valueOf(relPos[3]).floatValue();
-	            case 3: objInfo.m_distChange = Float.valueOf(relPos[2]).floatValue();
-	            case 2: objInfo.m_distance = Float.valueOf(relPos[0]).floatValue();
+	            case 6:
+	                ((PlayerInfo)(objInfo)).m_headDir = Float.valueOf(relPos[5]).floatValue();
+	            case 5:
+	                ((PlayerInfo)(objInfo)).m_bodyDir = Float.valueOf(relPos[4]).floatValue();
+	            case 4:
+	                objInfo.m_dirChange = Float.valueOf(relPos[3]).floatValue();
+	            case 3:
+	                objInfo.m_distChange = Float.valueOf(relPos[2]).floatValue();
+	            case 2:
+	                objInfo.m_distance = Float.valueOf(relPos[0]).floatValue();
 		            objInfo.m_direction = Float.valueOf(relPos[1]).floatValue();
-		        break;
-	            default: objInfo.m_direction = Float.valueOf(relPos[0]).floatValue(); break;
+		            break;
+	            default:
+	                objInfo.m_direction = Float.valueOf(relPos[0]).floatValue();
+	                break;
 	        }
 	    }
     }
 
     /** Takes an ObjectInfo and adds it to the list matching its type. */
     private void putObjInfoIntoList(ObjectInfo obj){
-        if(obj instanceof BallInfo)
-            m_ball_info = (BallInfo)obj;
-        else if(obj instanceof FlagInfo)
-            m_flag_list.add((FlagInfo)obj);
-        else if(obj instanceof GoalInfo)
-            m_goal_list.add((GoalInfo)obj);
-        else if(obj instanceof LineInfo)
-            m_line_list.add((LineInfo)obj);
-        else if(obj instanceof PlayerInfo)
-            m_player_list.add((PlayerInfo)obj);
-        else
-            throw new IllegalArgumentException("VisualInfo: putObjInfoIntoList(ObjectInfo): did not recognize type!");
+        if(obj instanceof BallInfo){
+            m_ball_info = (BallInfo)obj;}
+        else if(obj instanceof FlagInfo){
+            m_flag_list.add((FlagInfo)obj);}
+        else if(obj instanceof GoalInfo){
+            m_goal_list.add((GoalInfo)obj);}
+        else if(obj instanceof LineInfo){
+            m_line_list.add((LineInfo)obj);}
+        else if(obj instanceof PlayerInfo){
+            m_player_list.add((PlayerInfo)obj);}
+        else{
+            throw new IllegalArgumentException("VisualInfo: putObjInfoIntoList(ObjectInfo): did not recognize type!");}
     }
     
     //===========================================================================
@@ -178,30 +185,33 @@ class VisualInfo
 	    String n = objectName[0];
 
 	    //Player
-	    if(p_player.matcher(n).matches())
+	    if (p_player.matcher(n).matches())
 	    {
 	        String team = new String();
 	        int uniformNumber = 0;
 	        boolean goalie = false;
-	        switch(len)
+	        switch (len)
             {
-	        case 4: goalie = (objectName[3].compareTo("goalie") == 0); //if it is a goalie
-	        case 3: uniformNumber = Integer.parseInt(objectName[2]); //if the player number is available
-	        case 2: team = p_quote.matcher(objectName[1]).replaceAll(""); //Team Name (remove quotation marks)
-		    objInfo = new PlayerInfo(team,uniformNumber,goalie);
-		    break;
-	        default: objInfo = new PlayerInfo(); break;
+	            case 4:
+	                goalie = (objectName[3].compareTo("goalie") == 0); //if it is a goalie
+	            case 3:
+	                uniformNumber = Integer.parseInt(objectName[2]); //if the player number is available
+	            case 2:
+	                team = p_quote.matcher(objectName[1]).replaceAll(""); //Team Name (remove quotation marks)
+		            objInfo = new PlayerInfo(team,uniformNumber,goalie);
+		            break;
+	            default: objInfo = new PlayerInfo(); break;
+	        }
 	    }
-	}
         //Ball
-        else if(p_ball.matcher(n).matches())
+        else if (p_ball.matcher(n).matches())
         {
             objInfo = new BallInfo();
         }
         //Goal
-        else if(p_goal.matcher(n).matches())
+        else if (p_goal.matcher(n).matches())
         {
-            if(len == 2)
+            if (len == 2)
             {
                 objInfo = new GoalInfo(objectName[1].charAt(0)); //if there is side info
             }
@@ -211,7 +221,7 @@ class VisualInfo
             }
         }
         //Line
-        else if(p_line.matcher(n).matches())
+        else if (p_line.matcher(n).matches())
         {
             if(len == 2)
             {
@@ -223,88 +233,88 @@ class VisualInfo
             }
         }
         //Flag
-        else if(p_flag.matcher(n).matches())
+        else if (p_flag.matcher(n).matches())
         {
             char type = ' '; // p|g
             char pos1 = ' '; // l|r|t|b|c
             char pos2 = ' '; // t|b|l|r|c
             int num = 0;     // 0|10|20|30|40|50
             boolean out = true;
-            if(len == 1)
+            if (len == 1)
             {
                 objInfo = new FlagInfo();
             }
             else
             {
-                if(p_type.matcher(objectName[1]).matches())
+                if (p_type.matcher(objectName[1]).matches())
                 {
                     type = objectName[1].charAt(0);
                     out = false;
-                    switch(len)
+                    switch (len)
                     {
                         case 4:
-                        pos2 = objectName[3].charAt(0);
-                        pos1 = objectName[2].charAt(0);
-                        break;
-                        case 3: //Is this possible?
-                        if(p_lr.matcher(objectName[2]).matches())
-                        {
+                            pos2 = objectName[3].charAt(0);
                             pos1 = objectName[2].charAt(0);
-                        }
-                        else
-                        {
-                            pos2 = objectName[2].charAt(0);
-                        }
-                    break;
+                            break;
+                        case 3: //Is this possible?
+                            if (p_lr.matcher(objectName[2]).matches())
+                            {
+                                pos1 = objectName[2].charAt(0);
+                            }
+                            else
+                            {
+                                pos2 = objectName[2].charAt(0);
+                            }
+                            break;
                     }
                 }
-                else if(objectName[len - 1].compareTo("0") == 0)
+                else if (objectName[len - 1].compareTo("0") == 0)
                 {
-                    if(len == 3) //Is OTHERWISE possible?
+                    if (len == 3) //Is OTHERWISE possible?
                     {
                         pos1 = objectName[1].charAt(0);
                     }
                 }
-                else if(p_number.matcher(objectName[len - 1]).matches())
+                else if (p_number.matcher(objectName[len - 1]).matches())
                 {
                     num = Integer.parseInt(objectName[len - 1]);
-                    switch(len)
+                    switch (len)
                     {
                         case 4:
-                        pos2 = objectName[2].charAt(0);
-                        pos1 = objectName[1].charAt(0);
-                        break;
-                        case 3: //Is this possible?
-                        if(p_lr.matcher(objectName[1]).matches())
-                        {
+                            pos2 = objectName[2].charAt(0);
                             pos1 = objectName[1].charAt(0);
-                        }
-                        else
-                        {
-                            pos2 = objectName[1].charAt(0);
-                        }
-                    break;
+                            break;
+                        case 3: //Is this possible?
+                            if (p_lr.matcher(objectName[1]).matches())
+                            {
+                                pos1 = objectName[1].charAt(0);
+                            }
+                            else
+                            {
+                                pos2 = objectName[1].charAt(0);
+                            }
+                            break;
                     }
                 }
                 else
                 {
-                    out= false;
+                    out = false;
                     switch (len)
                     {
                         case 3:
-                        pos2 = objectName[2].charAt(0);
-                        pos1 = objectName[1].charAt(0);
-                        break;
-                        case 2: // I don't think t|b occurs, but better safe than sorry
-                        if(p_lrc.matcher(objectName[1]).matches())
-                        {
+                            pos2 = objectName[2].charAt(0);
                             pos1 = objectName[1].charAt(0);
-                        }
-                        else
-                        {
-                            pos2 = objectName[1].charAt(0);
-                        }
-                    break;
+                            break;
+                        case 2: // I don't think t|b occurs, but better safe than sorry
+                            if (p_lrc.matcher(objectName[1]).matches())
+                            {
+                                pos1 = objectName[1].charAt(0);
+                            }
+                            else
+                            {
+                                pos2 = objectName[1].charAt(0);
+                            }
+                        break;
                     }
                 }
                 String flagType = "flag";

@@ -13,14 +13,13 @@ import java.util.regex.*;
 
 class Brain extends Thread
 {
-	private Krislet m_krislet;			// robot which is controled by this brain
-	private Memory m_memory;				// place where all information is stored
+    private Krislet m_krislet; // robot which is controlled by this brain
+	private Memory m_memory; // place where all information is stored
 	private char m_side;
 	volatile private boolean m_timeOver;
 	private String m_playMode;
 
     //---------------------------------------------------------------------------
-    // This constructor:
     // - stores connection to krislet
     // - starts thread for this object
     public Brain(Krislet krislet, String team, char side, int number, String playMode)
@@ -46,7 +45,7 @@ class Brain extends Thread
     //		2.1. If we are directed towards the ball then go to the ball
     //		2.2. else turn to the ball
     //
-    //	3. If we dont know where is opponent goal then turn wait 
+    //	3. If we don't know where is opponent goal then turn wait
     //				and wait for new info
     //
     //	4. Kick ball
@@ -55,84 +54,83 @@ class Brain extends Thread
     //	we waits one simulator steps. (This of course should be done better)
 
     // ***************  Improvements ******************
-    // Allways know where the goal is.
+    // Always know where the goal is.
     // Move to a place on my side on a kick_off
     // ************************************************
 
     public void run()
     {
-		ObjectInfo object;
+		ObjectInfo currentObjectInfo;
 
-		// first put it somewhere on my side
+		ObjectInfo ball;
+		ObjectInfo goal_opponent;
+
+
+		// Place player randomly on field TODO: change
 		if(Pattern.matches("^before_kick_off.*",m_playMode))
 		{
             m_krislet.move(-Math.random() * 52.5, 34 - Math.random() * 68.0);
         }
 
-		while( !m_timeOver )
+		while (!m_timeOver)
 		{
-			object = m_memory.getBallInfo();
-			if( object == null )
+			ball = m_memory.getBallInfo();
+			if (ball == null)
 			{
 				// If you don't know where is ball then find it
-				m_krislet.turn(40);
-				m_memory.waitForNewInfo();
+                findObject(ball);
 			}
-			else if( object.m_distance > 1.0 )
+			else if (ball.m_distance > 1.0)
 			{
 				// If ball is too far then
 				// turn to ball or
 				// if we have correct direction then go to ball
-				if( object.m_direction != 0 )
+				if (ball.m_direction != 0)
 				{
-					m_krislet.turn(object.m_direction);
+				    turnTowards(ball);
 				}
 				else
 				{
-					m_krislet.dash(10*object.m_distance);
+					m_krislet.dash(10 * ball.m_distance);
 				}
 			}
 			else
 			{
-				// We know where is ball and we can kick it
+				// We know where the ball is and we can kick it
 				// so look for goal
-				if( m_side == 'l' )
+				if (m_side == 'l')
 				{
-					object = m_memory.getGoalObj('r');
+					goal_opponent = m_memory.getGoalObj('r');
 				}
 				else
 				{
-					object = m_memory.getGoalObj('l');
+					goal_opponent = m_memory.getGoalObj('l');
 				}
 
-				if( object == null )
+				if (goal_opponent == null)
 				{
-					m_krislet.turn(40);
-					m_memory.waitForNewInfo();
-				}
+				    findObject(goal_opponent);
+    			}
 				else
                 {
-					m_krislet.kick(100, object.m_direction);
+					m_krislet.kick(100, goal_opponent.m_direction);
                 }
 			}
 
 			// sleep one step to ensure that we will not send
 			// two commands in one cycle.
-			try
-			{
-				Thread.sleep(2*Memory.SIMULATOR_STEP);
-			}
-			catch(Exception e)
-			{
 
-			}
+            waitForNextCycle();
+
 		}
 		m_krislet.bye();
     }
 
-    //===========================================================================
-    // Here are suporting functions for implement logic
 
+
+
+    //===========================================================================
+    // Here are supporting functions for implement logic
 
     //---------------------------------------------------------------------------
     // This function sends see information
@@ -156,4 +154,27 @@ class Brain extends Thread
 	        m_timeOver = true;
 	    }
     }
+
+    private void findObject(ObjectInfo obj)
+    {
+        m_krislet.turn(40);
+        m_memory.waitForNewInfo();
+    }
+
+    public void turnTowards(ObjectInfo obj)
+    {
+        m_krislet.turn(obj.m_direction);
+    }
+
+    private void waitForNextCycle() {
+        try
+        {
+            Thread.sleep(2*Memory.SIMULATOR_STEP);
+        }
+        catch(Exception e)
+        {
+
+        }
+    }
+
 }

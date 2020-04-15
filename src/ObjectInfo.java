@@ -12,7 +12,7 @@
 
 //***************************************************************************
 //
-//	This is base class for different classese with visual information
+//	This is base class for different classes with visual information
 //	about objects
 //
 //***************************************************************************
@@ -24,8 +24,6 @@ class ObjectInfo
 	public float m_distChange;
 	public float m_dirChange;
 
-	//===========================================================================
-	// Initialization member functions
 	public ObjectInfo(ObjectType type)
 	{
 		 m_type = type;
@@ -77,10 +75,6 @@ enum ObjectType{
 }
 
 //***************************************************************************
-//
-//	This class holds visual information about player
-//
-//***************************************************************************
 class PlayerInfo extends ObjectInfo
 {
 	String  m_teamName = "";
@@ -89,8 +83,6 @@ class PlayerInfo extends ObjectInfo
 	float m_headDir;
 	boolean m_goalie = false;
 
-	//===========================================================================
-	// Initialization member functions
 	public PlayerInfo()
 	{
 		super(ObjectType.PLAYER);
@@ -137,15 +129,10 @@ class PlayerInfo extends ObjectInfo
 }
 
 //***************************************************************************
-//
-//	This class holds visual information about goal
-//
-//***************************************************************************
 class GoalInfo extends ObjectInfo
 {
 	private char m_side;
-	//===========================================================================
-	// Initialization member functions
+
 	public GoalInfo()
 	{
 		super(ObjectType.GOAL);
@@ -166,24 +153,14 @@ class GoalInfo extends ObjectInfo
 }
 
 //***************************************************************************
-//
-//	This class holds visual information about ball
-//
-//***************************************************************************
 class BallInfo extends ObjectInfo
 {
-	//===========================================================================
-	// Initialization member functions
 	public BallInfo()
   {
 	super(ObjectType.BALL);
   }
 }
 
-//***************************************************************************
-//
-//	This class holds visual information about flag
-//
 //***************************************************************************
 class FlagInfo extends ObjectInfo
 {
@@ -193,8 +170,6 @@ class FlagInfo extends ObjectInfo
 	int m_num;    // 0|10|20|30|40|50
 	boolean m_out;
 
-	//===========================================================================
-	// Initialization member functions
 	public FlagInfo()
 	{
 		super(ObjectType.FLAG);
@@ -217,16 +192,10 @@ class FlagInfo extends ObjectInfo
 }
 
 //***************************************************************************
-//
-//	This class holds visual information about line
-//
-//***************************************************************************
 class LineInfo extends ObjectInfo
 {
 	char m_kind;  // l|r|t|b
 
-	//===========================================================================
-	// Initialization member functions
 	public LineInfo()
 	{
 		super(ObjectType.LINE);
