@@ -5,7 +5,7 @@
 //
 
 class Memory {
-    volatile private VisualInfo m_info;    // place where all information is stored
+    volatile private VisualInfo info;    // place where all information is stored
     final static int SIMULATOR_STEP = 100;
 
     public Memory() {
@@ -14,7 +14,7 @@ class Memory {
     //---------------------------------------------------------------------------
     // This function puts see information into our memory
     public void store(VisualInfo info) {
-        m_info = info;
+        this.info = info;
     }
 
     /**
@@ -22,11 +22,11 @@ class Memory {
      */
     public GoalInfo getGoalObj(char side) {
 
-        if (m_info == null) {
+        if (info == null) {
             waitForNewInfo();
         }
 
-        for (GoalInfo goalObj : m_info.getGoalList()) {
+        for (GoalInfo goalObj : info.getGoalList()) {
             if (goalObj.getSide() == side) {
                 return goalObj;
             }
@@ -37,20 +37,20 @@ class Memory {
 
     public BallInfo getBallInfo() {
 
-        if (m_info == null) {
+        if (info == null) {
             waitForNewInfo();
         }
 
-        return m_info.getBallInfo();
+        return info.getBallInfo();
     }
 
     //---------------------------------------------------------------------------
     // This function waits for new visual information
     public void waitForNewInfo() {
         // first remove old info
-        m_info = null;
+        info = null;
         // now wait until we get new copy
-        while (m_info == null) {
+        while (info == null) {
             // We can get information faster then 75 milliseconds
             try {
                 Thread.sleep(SIMULATOR_STEP);
