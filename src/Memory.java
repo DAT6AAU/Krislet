@@ -4,6 +4,9 @@
 //	Date:			1997/04/28
 //
 
+import objects.BallInfo;
+import objects.GoalInfo;
+
 class Memory {
     volatile private VisualInfo m_info;    // place where all information is stored
     final static int SIMULATOR_STEP = 100;

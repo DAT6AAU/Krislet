@@ -16,6 +16,8 @@
 //  Modified by:	Edgar Acosta
 //  Date:		March 5, 2008
 
+import objects.*;
+
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;

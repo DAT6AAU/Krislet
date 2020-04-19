@@ -8,6 +8,8 @@
 //    Modified by:      Edgar Acosta
 //    Date:             March 4, 2008
 
+import objects.ObjectInfo;
+
 import java.lang.Math;
 import java.util.regex.*;
 
