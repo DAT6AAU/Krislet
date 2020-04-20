@@ -20,6 +20,12 @@ class Brain extends Thread {
     volatile private boolean timeOver;
     private String playMode;
 
+    ObjectInfo ball;
+    ObjectInfo goal_opponent;
+
+    String nextCommand; // todo maybe an enum?
+
+
     //---------------------------------------------------------------------------
     // - stores connection to krislet
     // - starts thread for this object
@@ -59,11 +65,6 @@ class Brain extends Thread {
     // ************************************************
 
     public void run() {
-        ObjectInfo ball;
-        ObjectInfo goal_opponent;
-
-        String nextCommand; // todo maybe an enum?
-
         // before kickoff
         setupFormation();
 
@@ -71,35 +72,7 @@ class Brain extends Thread {
         while (!timeOver) {
             nextCommand = null;
 
-            ball = memory.getBallInfo();
-            if (ball == null) {
-                // If you don't know where is ball then find it
-                findObject(ball);
-            } else if (ball.m_distance > 1.0) {
-                // If ball is too far then turn to ball or
-                // if we have correct direction then go to ball
-                if (ball.m_direction != 0) {
-                    turnTowards(ball);
-                } else {
-                    nextCommand = "dash " + 10 * ball.m_distance;
-                    //krislet.dash(10 * ball.m_distance);
-                }
-            } else {
-                // We know where the ball is and we can kick it
-                // so look for goal
-                if (side == 'l') {
-                    goal_opponent = memory.getGoalObj('r');
-                } else {
-                    goal_opponent = memory.getGoalObj('l');
-                }
-
-                if (goal_opponent == null) {
-                    findObject(goal_opponent); // giver ingen mening med null
-                } else {
-                    nextCommand = "kick 100 " + goal_opponent.m_direction;
-                    //krislet.kick(100, goal_opponent.m_direction);
-                }
-            }
+            boerneFodbold();
 
             if (nextCommand != null) {
                 krislet.send("(" + nextCommand + ")");
@@ -110,7 +83,6 @@ class Brain extends Thread {
             // two commands in one cycle.
             waitForNextCycle();
         }
-
 
         // after kickoff
         krislet.bye();
@@ -140,6 +112,38 @@ class Brain extends Thread {
         }
     }
 
+
+    private void boerneFodbold(){
+        ball = memory.getBallInfo(); // måske rykkes ud som en fast variabel
+        if (ball == null) {
+            // If you don't know where is ball then find it
+            findObject(ball);
+        } else if (ball.m_distance > 1.0) {
+            // If ball is too far then turn to ball or
+            // if we have correct direction then go to ball
+            if (ball.m_direction != 0) {
+                turnTowards(ball);
+            } else {
+                nextCommand = "dash " + 10 * ball.m_distance;
+                //krislet.dash(10 * ball.m_distance);
+            }
+        } else {
+            // We know where the ball is and we can kick it
+            // so look for goal
+            if (side == 'l') {
+                goal_opponent = memory.getGoalObj('r');
+            } else {
+                goal_opponent = memory.getGoalObj('l');
+            }
+
+            if (goal_opponent == null) {
+                findObject(goal_opponent); // giver ingen mening med null
+            } else {
+                nextCommand = "kick 100 " + goal_opponent.m_direction;
+                //krislet.kick(100, goal_opponent.m_direction);
+            }
+        }
+    }
 
     /// check if used
 
