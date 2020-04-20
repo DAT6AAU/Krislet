@@ -28,7 +28,7 @@ class Brain extends Thread {
         this.krislet = krislet;
         memory = new Memory();
         //team = team;
-        this.side = side;
+        this.side = side; // naming or description
         // number = number;
         this.playMode = playMode;
         start();
@@ -76,13 +76,13 @@ class Brain extends Thread {
                 // If you don't know where is ball then find it
                 findObject(ball);
             } else if (ball.m_distance > 1.0) {
-                // If ball is too far then
-                // turn to ball or
+                // If ball is too far then turn to ball or
                 // if we have correct direction then go to ball
                 if (ball.m_direction != 0) {
                     turnTowards(ball);
                 } else {
-                    krislet.dash(10 * ball.m_distance);
+                    nextCommand = "dash " + 10 * ball.m_distance;
+                    //krislet.dash(10 * ball.m_distance);
                 }
             } else {
                 // We know where the ball is and we can kick it
@@ -94,13 +94,15 @@ class Brain extends Thread {
                 }
 
                 if (goal_opponent == null) {
-                    findObject(goal_opponent);
+                    findObject(goal_opponent); // giver ingen mening med null
                 } else {
-                    krislet.kick(100, goal_opponent.m_direction);
+                    nextCommand = "kick 100 " + goal_opponent.m_direction;
+                    //krislet.kick(100, goal_opponent.m_direction);
                 }
             }
 
             if (nextCommand != null) {
+                krislet.send("(" + nextCommand + ")");
                 //do the thing
             }
 

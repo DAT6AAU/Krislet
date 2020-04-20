@@ -255,7 +255,7 @@ class Krislet {
 
     //---------------------------------------------------------------------------
     // This function sends via socket message to the server
-    private void send(String message) {
+    public void send(String message) {
         byte[] buffer = Arrays.copyOf(message.getBytes(), MSG_SIZE);
         try {
             DatagramPacket packet = new DatagramPacket(buffer, MSG_SIZE, host, port);
