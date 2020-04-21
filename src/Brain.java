@@ -112,7 +112,6 @@ class Brain extends Thread {
         }
     }
 
-
     private void boerneFodbold(){
         ball = memory.getBallInfo(); // måske rykkes ud som en fast variabel
         if (ball == null) {
