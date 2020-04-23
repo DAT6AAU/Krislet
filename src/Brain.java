@@ -24,17 +24,16 @@ class Brain extends Thread {
     ObjectInfo goal_opponent;
 
     String nextCommand; // todo maybe an enum?
-
-
+    
     //---------------------------------------------------------------------------
-    // - stores connection to krislet
+    // - stores connection to Krislet
     // - starts thread for this object
     public Brain(Krislet krislet, String team, char side, int number, String playMode) {
         this.timeOver = false;
         this.krislet = krislet;
         memory = new Memory();
         //team = team;
-        this.side = side; // naming or description
+        this.side = side; // better naming or description
         // number = number;
         this.playMode = playMode;
         start();
@@ -164,5 +163,4 @@ class Brain extends Thread {
             timeOver = true;
         }
     }
-
 }
