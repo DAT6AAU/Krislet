@@ -69,9 +69,17 @@ class Brain extends Thread {
 
         // kickoff
         while (!timeOver) {
-            nextCommand = null;
+            //update() #info fra dataklassen (sense_body og score)
 
+            updateCurrentObjective();
+            updateCurrentAction();
+
+            nextCommand = null;
+            selectCommandForNextCycle();
+
+            //
             boerneFodbold();
+            //
 
             if (nextCommand != null) {
                 krislet.send("(" + nextCommand + ")");
@@ -86,6 +94,24 @@ class Brain extends Thread {
         // after kickoff
         krislet.bye();
     }
+
+    private void updateCurrentObjective() {
+        // offense
+        // defense
+        // can be extended later
+    }
+
+    private void updateCurrentAction() {
+        // findObject(Object)
+        // toTowards(Object
+        // moveTowards(Object
+        // moveBetween(object, object)
+
+    }
+
+    private void selectCommandForNextCycle() {
+    }
+
 
     private void setupFormation() {
         // Place player randomly on field TODO: change
@@ -143,7 +169,10 @@ class Brain extends Thread {
         }
     }
 
-    /// check if used
+
+
+
+    /// TODO: check if used
 
     //---------------------------------------------------------------------------
     // This function sends see information
