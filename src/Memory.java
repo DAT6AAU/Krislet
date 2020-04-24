@@ -4,65 +4,61 @@
 //	Date:			1997/04/28
 //
 
-class Memory 
-{
-    //---------------------------------------------------------------------------
-    // This constructor:
-    // - initializes all variables
-    public Memory()
-    {
+import objects.BallInfo;
+import objects.GoalInfo;
+
+class Memory {
+    volatile private VisualInfo info;    // place where all information is stored
+    final static int SIMULATOR_STEP = 100;
+
+    public Memory() {
     }
 
     //---------------------------------------------------------------------------
     // This function puts see information into our memory
-    public void store(VisualInfo info)
-    {
-		m_info = info;
+    public void store(VisualInfo info) {
+        this.info = info;
     }
 
-    //---------------------------------------------------------------------------
-    // This function looks for specified object
-    public ObjectInfo getObject(String name) 
-    {
-		if(m_info == null)
-		{
-			waitForNewInfo();
-		}
+    /**
+     * @param side: 'r' or 'l'
+     */
+    public GoalInfo getGoalObj(char side) {
 
-		for(int c = 0 ; c < m_info.m_objects.size() ; c ++)
-	    {
-			ObjectInfo object = (ObjectInfo)m_info.m_objects.elementAt(c);
-			if(object.m_type.compareTo(name) == 0)
-			{
-		    	return object;
-		    }
-	    }												 
+        if (info == null) {
+            waitForNewInfo();
+        }
 
-		return null;
+        for (GoalInfo goalObj : info.getGoalList()) {
+            if (goalObj.getSide() == side) {
+                return goalObj;
+            }
+        }
+
+        return null;
+    }
+
+    public BallInfo getBallInfo() {
+
+        if (info == null) {
+            waitForNewInfo();
+        }
+
+        return info.getBallInfo();
     }
 
     //---------------------------------------------------------------------------
     // This function waits for new visual information
-    public void waitForNewInfo() 
-    {
-		// first remove old info
-		m_info = null;
-		// now wait until we get new copy
-		while(m_info == null)
-	    {
-			// We can get information faster then 75 miliseconds
-			try
-			{
-				Thread.sleep(SIMULATOR_STEP);
-			}
-			catch(Exception e)
-			{
-			}
-	    }
+    public void waitForNewInfo() {
+        // first remove old info
+        info = null;
+        // now wait until we get new copy
+        while (info == null) {
+            // We can get information faster then 75 milliseconds
+            try {
+                Thread.sleep(SIMULATOR_STEP);
+            } catch (Exception e) {
+            }
+        }
     }
-
-    //===========================================================================
-    // Private members
-    volatile private VisualInfo	m_info;	// place where all information is stored
-    final static int SIMULATOR_STEP = 100;
 }

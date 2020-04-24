@@ -8,25 +8,35 @@
 //    Modified by:      Edgar Acosta
 //    Date:             March 4, 2008
 
+import objects.ObjectInfo;
+
 import java.lang.Math;
 import java.util.regex.*;
 
-class Brain extends Thread implements SensorInput
-{
+class Brain extends Thread {
+    private Krislet krislet; // robot which is controlled by this brain
+    private Memory memory; // place where all information is stored
+    private char side;
+    volatile private boolean timeOver;
+    private String playMode;
+
+    ObjectInfo ball;
+    ObjectInfo goal_opponent;
+
+    String nextCommand; // todo maybe an enum?
+    
     //---------------------------------------------------------------------------
-    // This constructor:
-    // - stores connection to krislet
+    // - stores connection to Krislet
     // - starts thread for this object
-    public Brain(SendCommand krislet, String team, char side, int number, String playMode)
-    {
-		m_timeOver = false;
-		m_krislet = krislet;
-		m_memory = new Memory();
-		//m_team = team;
-		m_side = side;
-		// m_number = number;
-		m_playMode = playMode;
-		start();
+    public Brain(Krislet krislet, String team, char side, int number, String playMode) {
+        this.timeOver = false;
+        this.krislet = krislet;
+        memory = new Memory();
+        //team = team;
+        this.side = side; // better naming or description
+        // number = number;
+        this.playMode = playMode;
+        start();
     }
 
     //---------------------------------------------------------------------------
@@ -40,7 +50,7 @@ class Brain extends Thread implements SensorInput
     //		2.1. If we are directed towards the ball then go to the ball
     //		2.2. else turn to the ball
     //
-    //	3. If we dont know where is opponent goal then turn wait 
+    //	3. If we don't know where is opponent goal then turn wait
     //				and wait for new info
     //
     //	4. Kick ball
@@ -49,115 +59,137 @@ class Brain extends Thread implements SensorInput
     //	we waits one simulator steps. (This of course should be done better)
 
     // ***************  Improvements ******************
-    // Allways know where the goal is.
+    // Always know where the goal is.
     // Move to a place on my side on a kick_off
     // ************************************************
 
-    public void run()
-    {
-		ObjectInfo object;
+    public void run() {
+        // before kickoff
+        setupFormation();
 
-		// first put it somewhere on my side
-		if(Pattern.matches("^before_kick_off.*",m_playMode))
-		{
-            m_krislet.move(-Math.random() * 52.5, 34 - Math.random() * 68.0);
+        // kickoff
+        while (!timeOver) {
+            //update() #info fra dataklassen (sense_body og score)
+
+            updateCurrentObjective();
+            updateCurrentAction();
+
+            nextCommand = null;
+            selectCommandForNextCycle();
+
+            //
+            boerneFodbold();
+            //
+
+            if (nextCommand != null) {
+                krislet.send("(" + nextCommand + ")");
+                //do the thing
+            }
+
+            // sleep one step to ensure that we will not send
+            // two commands in one cycle.
+            waitForNextCycle();
         }
 
-		while( !m_timeOver )
-		{
-			object = m_memory.getObject("ball");
-			if( object == null )
-			{
-				// If you don't know where is ball then find it
-				m_krislet.turn(40);
-				m_memory.waitForNewInfo();
-			}
-			else if( object.m_distance > 1.0 )
-			{
-				// If ball is too far then
-				// turn to ball or
-				// if we have correct direction then go to ball
-				if( object.m_direction != 0 )
-				{
-					m_krislet.turn(object.m_direction);
-				}
-				else
-				{
-					m_krislet.dash(10*object.m_distance);
-				}
-			}
-			else
-			{
-				// We know where is ball and we can kick it
-				// so look for goal
-				if( m_side == 'l' )
-				{
-					object = m_memory.getObject("goal r");
-				}
-				else
-				{
-					object = m_memory.getObject("goal l");
-				}
-
-				if( object == null )
-				{
-					m_krislet.turn(40);
-					m_memory.waitForNewInfo();
-				}
-				else
-                {
-					m_krislet.kick(100, object.m_direction);
-                }
-			}
-
-			// sleep one step to ensure that we will not send
-			// two commands in one cycle.
-			try
-			{
-				Thread.sleep(2*SoccerParams.simulator_step);
-			}
-			catch(Exception e)
-			{
-
-			}
-		}
-		m_krislet.bye();
+        // after kickoff
+        krislet.bye();
     }
 
-    //===========================================================================
-    // Here are suporting functions for implement logic
+    private void updateCurrentObjective() {
+        // offense
+        // defense
+        // can be extended later
+    }
 
-    //===========================================================================
-    // Implementation of SensorInput Interface
+    private void updateCurrentAction() {
+        // findObject(Object)
+        // toTowards(Object
+        // moveTowards(Object
+        // moveBetween(object, object)
+
+    }
+
+    private void selectCommandForNextCycle() {
+    }
+
+
+    private void setupFormation() {
+        // Place player randomly on field TODO: change
+        if (Pattern.matches("^before_kick_off.*", playMode)) {
+            krislet.move(-Math.random() * 52.5, 34 - Math.random() * 68.0);
+        }
+    }
+
+    private void findObject(ObjectInfo obj) {
+        krislet.turn(40);
+        memory.waitForNewInfo(); // todo maybe remove. should only be called in memory
+    }
+
+    private void turnTowards(ObjectInfo obj) {
+        krislet.turn(obj.m_direction);
+    }
+
+    private void waitForNextCycle() {
+        try {
+            Thread.sleep(2 * Memory.SIMULATOR_STEP);
+        } catch (Exception e) {
+
+        }
+    }
+
+    private void boerneFodbold(){
+        ball = memory.getBallInfo(); // måske rykkes ud som en fast variabel
+        if (ball == null) {
+            // If you don't know where is ball then find it
+            findObject(ball);
+        } else if (ball.m_distance > 1.0) {
+            // If ball is too far then turn to ball or
+            // if we have correct direction then go to ball
+            if (ball.m_direction != 0) {
+                turnTowards(ball);
+            } else {
+                nextCommand = "dash " + 10 * ball.m_distance;
+                //krislet.dash(10 * ball.m_distance);
+            }
+        } else {
+            // We know where the ball is and we can kick it
+            // so look for goal
+            if (side == 'l') {
+                goal_opponent = memory.getGoalObj('r');
+            } else {
+                goal_opponent = memory.getGoalObj('l');
+            }
+
+            if (goal_opponent == null) {
+                findObject(goal_opponent); // giver ingen mening med null
+            } else {
+                nextCommand = "kick 100 " + goal_opponent.m_direction;
+                //krislet.kick(100, goal_opponent.m_direction);
+            }
+        }
+    }
+
+
+
+
+    /// TODO: check if used
 
     //---------------------------------------------------------------------------
     // This function sends see information
-    public void see(VisualInfo info)
-    {
-	    m_memory.store(info);
+    public void see(VisualInfo info) {
+        memory.store(info);
     }
 
     //---------------------------------------------------------------------------
     // This function receives hear information from player
-    public void hear(int time, int direction, String message)
-    {
+    public void hear(int time, int direction, String message) {
     }
 
     //---------------------------------------------------------------------------
     // This function receives hear information from referee
-    public void hear(int time, String message)
-    {						 
-	    if(message.compareTo("time_over") == 0)
-	    {
-	        m_timeOver = true;
-	    }
+    public void hear(int time, String message) {
+        if (message.compareTo("time_over") == 0) {
+            timeOver = true;
+        }
     }
-
-    //===========================================================================
-    // Private members
-    private SendCommand m_krislet;			// robot which is controled by this brain
-    private Memory m_memory;				// place where all information is stored
-    private char m_side;
-    volatile private boolean m_timeOver;
-    private String m_playMode;
 }
