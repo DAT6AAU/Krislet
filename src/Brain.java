@@ -14,23 +14,28 @@ import java.lang.Math;
 import java.util.regex.*;
 
 class Brain extends Thread {
-    private Krislet m_krislet; // robot which is controlled by this brain
-    private Memory m_memory; // place where all information is stored
-    private char m_side;
-    volatile private boolean m_timeOver;
-    private String m_playMode;
+    private Krislet krislet; // robot which is controlled by this brain
+    private Memory memory; // place where all information is stored
+    private char side;
+    volatile private boolean timeOver;
+    private String playMode;
 
+    ObjectInfo ball;
+    ObjectInfo goal_opponent;
+
+    String nextCommand; // todo maybe an enum?
+    
     //---------------------------------------------------------------------------
-    // - stores connection to krislet
+    // - stores connection to Krislet
     // - starts thread for this object
     public Brain(Krislet krislet, String team, char side, int number, String playMode) {
-        m_timeOver = false;
-        m_krislet = krislet;
-        m_memory = new Memory();
-        //m_team = team;
-        m_side = side;
-        // m_number = number;
-        m_playMode = playMode;
+        this.timeOver = false;
+        this.krislet = krislet;
+        memory = new Memory();
+        //team = team;
+        this.side = side; // better naming or description
+        // number = number;
+        this.playMode = playMode;
         start();
     }
 
@@ -59,48 +64,25 @@ class Brain extends Thread {
     // ************************************************
 
     public void run() {
-        ObjectInfo ball;
-        ObjectInfo goal_opponent;
-
-        String nextCommand; // todo maybe an enum?
-
         // before kickoff
         setupFormation();
 
         // kickoff
-        while (!m_timeOver) {
+        while (!timeOver) {
+            //update() #info fra dataklassen (sense_body og score)
+
+            updateCurrentObjective();
+            updateCurrentAction();
+
             nextCommand = null;
+            selectCommandForNextCycle();
 
-            ball = m_memory.getBallInfo();
-            if (ball == null) {
-                // If you don't know where is ball then find it
-                findObject(ball);
-            } else if (ball.m_distance > 1.0) {
-                // If ball is too far then
-                // turn to ball or
-                // if we have correct direction then go to ball
-                if (ball.m_direction != 0) {
-                    turnTowards(ball);
-                } else {
-                    m_krislet.dash(10 * ball.m_distance);
-                }
-            } else {
-                // We know where the ball is and we can kick it
-                // so look for goal
-                if (m_side == 'l') {
-                    goal_opponent = m_memory.getGoalObj('r');
-                } else {
-                    goal_opponent = m_memory.getGoalObj('l');
-                }
-
-                if (goal_opponent == null) {
-                    findObject(goal_opponent);
-                } else {
-                    m_krislet.kick(100, goal_opponent.m_direction);
-                }
-            }
+            //
+            boerneFodbold();
+            //
 
             if (nextCommand != null) {
+                krislet.send("(" + nextCommand + ")");
                 //do the thing
             }
 
@@ -109,25 +91,42 @@ class Brain extends Thread {
             waitForNextCycle();
         }
 
-
         // after kickoff
-        m_krislet.bye();
+        krislet.bye();
     }
+
+    private void updateCurrentObjective() {
+        // offense
+        // defense
+        // can be extended later
+    }
+
+    private void updateCurrentAction() {
+        // findObject(Object)
+        // toTowards(Object
+        // moveTowards(Object
+        // moveBetween(object, object)
+
+    }
+
+    private void selectCommandForNextCycle() {
+    }
+
 
     private void setupFormation() {
         // Place player randomly on field TODO: change
-        if (Pattern.matches("^before_kick_off.*", m_playMode)) {
-            m_krislet.move(-Math.random() * 52.5, 34 - Math.random() * 68.0);
+        if (Pattern.matches("^before_kick_off.*", playMode)) {
+            krislet.move(-Math.random() * 52.5, 34 - Math.random() * 68.0);
         }
     }
 
     private void findObject(ObjectInfo obj) {
-        m_krislet.turn(40);
-        m_memory.waitForNewInfo(); // todo maybe remove. should only be called in memory
+        krislet.turn(40);
+        memory.waitForNewInfo(); // todo maybe remove. should only be called in memory
     }
 
     private void turnTowards(ObjectInfo obj) {
-        m_krislet.turn(obj.m_direction);
+        krislet.turn(obj.m_direction);
     }
 
     private void waitForNextCycle() {
@@ -138,13 +137,47 @@ class Brain extends Thread {
         }
     }
 
+    private void boerneFodbold(){
+        ball = memory.getBallInfo(); // måske rykkes ud som en fast variabel
+        if (ball == null) {
+            // If you don't know where is ball then find it
+            findObject(ball);
+        } else if (ball.m_distance > 1.0) {
+            // If ball is too far then turn to ball or
+            // if we have correct direction then go to ball
+            if (ball.m_direction != 0) {
+                turnTowards(ball);
+            } else {
+                nextCommand = "dash " + 10 * ball.m_distance;
+                //krislet.dash(10 * ball.m_distance);
+            }
+        } else {
+            // We know where the ball is and we can kick it
+            // so look for goal
+            if (side == 'l') {
+                goal_opponent = memory.getGoalObj('r');
+            } else {
+                goal_opponent = memory.getGoalObj('l');
+            }
 
-    /// check if used
+            if (goal_opponent == null) {
+                findObject(goal_opponent); // giver ingen mening med null
+            } else {
+                nextCommand = "kick 100 " + goal_opponent.m_direction;
+                //krislet.kick(100, goal_opponent.m_direction);
+            }
+        }
+    }
+
+
+
+
+    /// TODO: check if used
 
     //---------------------------------------------------------------------------
     // This function sends see information
     public void see(VisualInfo info) {
-        m_memory.store(info);
+        memory.store(info);
     }
 
     //---------------------------------------------------------------------------
@@ -156,8 +189,7 @@ class Brain extends Thread {
     // This function receives hear information from referee
     public void hear(int time, String message) {
         if (message.compareTo("time_over") == 0) {
-            m_timeOver = true;
+            timeOver = true;
         }
     }
-
 }

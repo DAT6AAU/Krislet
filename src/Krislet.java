@@ -21,16 +21,16 @@ import java.util.regex.*;
 //
 //***************************************************************************
 class Krislet {
-    private DatagramSocket m_socket; // Socket to communicate with server
-    private InetAddress m_host;    // Server address
-    private int m_port;    // server port
-    private String m_team;    // team name
-    private Brain m_brain; // input for sensor information
-    private boolean m_playing; // controls the MainLoop
+    private DatagramSocket socket; // Socket to communicate with server
+    private InetAddress host;    // Server address
+    private int port;    // server port
+    private String teamName;
+    private Brain brain; // input for sensor information
+    private boolean playing; // controls the MainLoop todo naming?
     private Pattern message_pattern = Pattern.compile("^\\((\\w+?)\\s.*");
     private Pattern hear_pattern = Pattern.compile("^\\(hear\\s(\\w+?)\\s(\\w+?)\\s(.*)\\).*");
     //private Pattern coach_pattern = Pattern.compile("coach");
-    // constants
+
     private static final int MSG_SIZE = 4096;    // Size of socket buffer
 
     //---------------------------------------------------------------------------
@@ -96,19 +96,19 @@ class Krislet {
 
     //---------------------------------------------------------------------------
     // This constructor opens socket for  connection with server
-    public Krislet(InetAddress host, int port, String team)
+    public Krislet(InetAddress host, int port, String teamName)
             throws SocketException {
-        m_socket = new DatagramSocket();
-        m_host = host;
-        m_port = port;
-        m_team = team;
-        m_playing = true;
+        this.socket = new DatagramSocket();
+        this.host = host;
+        this.port = port;
+        this.teamName = teamName;
+        this.playing = true;
     }
 
     //---------------------------------------------------------------------------
     // This destructor closes socket to server
     public void finalize() {
-        m_socket.close();
+        socket.close();
     }
 
     //===========================================================================
@@ -123,13 +123,13 @@ class Krislet {
         // first we need to initialize connection with server
         init();
 
-        m_socket.receive(packet);
+        socket.receive(packet);
         parseInitCommand(new String(buffer));
-        m_port = packet.getPort();
+        port = packet.getPort();
 
         // Now we should be connected to the server
         // and we know side, player number and play mode
-        while (m_playing) {
+        while (playing) {
             parseSensorInformation(receive());
         }
         finalize();
@@ -181,7 +181,7 @@ class Krislet {
     //---------------------------------------------------------------------------
     // This function sends bye command to the server
     public void bye() {
-        m_playing = false;
+        playing = false;
         send("(bye)");
     }
 
@@ -195,8 +195,8 @@ class Krislet {
         }
 
         // initialize player's brain
-        m_brain = new Brain(this,
-                m_team,
+        brain = new Brain(this,
+                teamName,
                 m.group(1).charAt(0),
                 Integer.parseInt(m.group(2)),
                 m.group(3));
@@ -207,7 +207,7 @@ class Krislet {
     //---------------------------------------------------------------------------
     // This function sends initialization command to the server
     private void init() {
-        send("(init " + m_team + " (version 9))");
+        send("(init " + teamName + " (version 9))");
     }
 
     //---------------------------------------------------------------------------
@@ -222,7 +222,7 @@ class Krislet {
         if (m.group(1).compareTo("see") == 0) {
             VisualInfo info = new VisualInfo(message);
             info.parse();
-            m_brain.see(info);
+            brain.see(info);
         } else if (m.group(1).compareTo("hear") == 0) {
             parseHear(message);
         }
@@ -244,22 +244,22 @@ class Krislet {
         sender = m.group(2);
         uttered = m.group(3);
         if (sender.compareTo("referee") == 0) {
-            m_brain.hear(time, uttered);
+            brain.hear(time, uttered);
         }
         //else if( coach_pattern.matcher(sender).find()){
         //    m_brain.hear(time,sender,uttered);}
         else if (sender.compareTo("self") != 0) {
-            m_brain.hear(time, Integer.parseInt(sender), uttered);
+            brain.hear(time, Integer.parseInt(sender), uttered);
         }
     }
 
     //---------------------------------------------------------------------------
     // This function sends via socket message to the server
-    private void send(String message) {
+    public void send(String message) {
         byte[] buffer = Arrays.copyOf(message.getBytes(), MSG_SIZE);
         try {
-            DatagramPacket packet = new DatagramPacket(buffer, MSG_SIZE, m_host, m_port);
-            m_socket.send(packet);
+            DatagramPacket packet = new DatagramPacket(buffer, MSG_SIZE, host, port);
+            socket.send(packet);
         } catch (IOException e) {
             System.err.println("socket sending error " + e);
         }
@@ -272,7 +272,7 @@ class Krislet {
         byte[] buffer = new byte[MSG_SIZE];
         DatagramPacket packet = new DatagramPacket(buffer, MSG_SIZE);
         try {
-            m_socket.receive(packet);
+            socket.receive(packet);
         } catch (SocketException e) {
             System.out.println("shutting down...");
         } catch (IOException e) {
