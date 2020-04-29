@@ -106,6 +106,7 @@ class Brain extends Thread {
         // toTowards(Object
         // moveTowards(Object
         // moveBetween(object, object)
+		// skip()
 
     }
 
