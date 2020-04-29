@@ -46,6 +46,8 @@ class VisualInfo {
     private Vector<GoalInfo> m_goal_list;
     private Vector<LineInfo> m_line_list;
 
+    private GameState gameState = new GameState();
+
     // Constructor for 'see' information
     public VisualInfo(String info) {
         info.trim();
@@ -145,6 +147,9 @@ class VisualInfo {
      * Takes an ObjectInfo and adds it to the list matching its type.
      */
     private void putObjInfoIntoList(ObjectInfo obj) {
+
+        //gameState.addObjectToGrid(obj.) //TODO should be implemented here, but we dont know position yet
+
         if (obj instanceof BallInfo) {
             m_ball_info = (BallInfo) obj;
         } else if (obj instanceof FlagInfo) {
