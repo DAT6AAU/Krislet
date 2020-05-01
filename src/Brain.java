@@ -24,6 +24,8 @@ class Brain extends Thread {
     ObjectInfo goal_opponent;
 
     String nextCommand; // todo maybe an enum?
+
+    private MathTest mathTest = new MathTest();
     
     //---------------------------------------------------------------------------
     // - stores connection to Krislet
@@ -71,6 +73,14 @@ class Brain extends Thread {
         while (!timeOver) {
             //update() #info fra dataklassen (sense_body og score)
 
+
+            double[] playerPos = mathTest.getPlayerPosition(memory.getFlagInfoList());
+            if(playerPos != null){
+                System.out.println(playerPos[0] + " " + playerPos[1]);
+            }else{
+                System.out.println("Player pos not found!");
+            }
+
             updateCurrentObjective();
             updateCurrentAction();
 
@@ -117,6 +127,7 @@ class Brain extends Thread {
         // Place player randomly on field TODO: change
         if (Pattern.matches("^before_kick_off.*", playMode)) {
             krislet.move(-Math.random() * 52.5, 34 - Math.random() * 68.0);
+            //krislet.move(-20, -20); //TODO: line for controlling start position
         }
     }
 

@@ -5,7 +5,7 @@ public class Runner {
 
     public static void main(String[] args) throws IOException {
 
-        int numberOfPlayers = 11;
+        int numberOfPlayers = 1; //Default 11 //TODO Change back!
 
         for (int i = 0; i < numberOfPlayers; i++) {
             KrisletThread player = new KrisletThread();
