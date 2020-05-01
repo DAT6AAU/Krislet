@@ -117,7 +117,7 @@ class VisualInfo {
         while (Objects_m.find()) {
             objInfo = createNewObject(Objects_m.group(1));
             //if(objInfo.valid())
-            putObjInfoIntoList(objInfo);
+
             // this splits the string containing the other info about
             // the object (distance, direction, etc.)
             String[] relPos = m_info_p.split(Objects_m.group(2));
@@ -140,6 +140,8 @@ class VisualInfo {
                     objInfo.m_direction = Float.valueOf(relPos[0]).floatValue();
                     break;
             }
+
+            putObjInfoIntoList(objInfo);
         }
     }
 

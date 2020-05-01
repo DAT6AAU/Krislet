@@ -5,7 +5,10 @@
 //
 
 import objects.BallInfo;
+import objects.FlagInfo;
 import objects.GoalInfo;
+
+import java.util.ArrayList;
 
 class Memory {
     volatile private VisualInfo info;    // place where all information is stored
@@ -45,6 +48,14 @@ class Memory {
         }
 
         return info.getBallInfo();
+    }
+
+    public ArrayList<FlagInfo> getFlagInfoList(){
+        if (info == null) {
+            waitForNewInfo();
+        }
+
+        return new ArrayList<>(info.getFlagList()); //TODO Maybe just store it as arraylist instead of vector?
     }
 
     //---------------------------------------------------------------------------
