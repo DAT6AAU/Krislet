@@ -1,5 +1,5 @@
-import javafx.util.Pair;
 import objects.FlagInfo;
+import utilities.PairGeneric;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,16 +104,16 @@ public class MathTest {
     public double[] getPlayerPosition(ArrayList<FlagInfo> flagSeeObjects){
         // identify two hardcoded flags that the player can see
         // TODO: Optimize: stop at two flags found
-        ArrayList<Pair<FlagInfo, HardcodedFlag>> flagsPlayerSees = new ArrayList<>();
+        ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> flagsPlayerSees = new ArrayList<>();
         for(FlagInfo flagInfoSee : flagSeeObjects){
             for(HardcodedFlag hardcodedFlag : hardcodedFlags){
                 if(flagInfoSee.isEqualTo(hardcodedFlag)){
-                    flagsPlayerSees.add(new Pair<>(flagInfoSee, hardcodedFlag));
+                    flagsPlayerSees.add(new PairGeneric<>(flagInfoSee, hardcodedFlag));
                 }
             }
         }
 
-        ArrayList<Pair<FlagInfo, HardcodedFlag>> chosenFlags;
+        ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> chosenFlags;
         if(flagsPlayerSees.size() < 2){
             return null; //does not see enough hardcoded flags
         }else{
@@ -121,15 +121,15 @@ public class MathTest {
         }
 
         //Get hardcoded pos of the two chosen flags
-        double[] chosenFlagOnePosition = chosenFlags.get(0).getValue().position;
-        double[] chosenFlagTwoPosition = chosenFlags.get(1).getValue().position;
+        double[] chosenFlagOnePosition = chosenFlags.get(0).getSecond().position;
+        double[] chosenFlagTwoPosition = chosenFlags.get(1).getSecond().position;
 
         //System.out.println("Chosen flag positons: " + chosenFlags.get(0).getIdentifier() + ": " + chosenFlagOnePosition[0] + ";" + chosenFlagOnePosition[1] + " " + chosenFlags.get(1).getIdentifier() + ": " + chosenFlagTwoPosition[0] + ";" + chosenFlagTwoPosition[1]);
 
         // Get player position // Results in two possibilities
         double[] playerPosition = getIntersections(
-                chosenFlagOnePosition[0], chosenFlagOnePosition[1], chosenFlags.get(0).getKey().m_distance,
-                chosenFlagTwoPosition[0], chosenFlagTwoPosition[1], chosenFlags.get(1).getKey().m_distance);
+                chosenFlagOnePosition[0], chosenFlagOnePosition[1], chosenFlags.get(0).getFirst().m_distance,
+                chosenFlagTwoPosition[0], chosenFlagTwoPosition[1], chosenFlags.get(1).getFirst().m_distance);
         if(playerPosition == null){
             return null;
         }
@@ -207,12 +207,12 @@ public class MathTest {
     /** Takes a list of flags and returns two of them.
     * These should be picked with a specific policy
     * TODO Improve to select closest flags? */
-    private ArrayList<Pair<FlagInfo, HardcodedFlag>> pickTwoFlags(ArrayList<Pair<FlagInfo, HardcodedFlag>> givenFlags){
+    private ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> pickTwoFlags(ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> givenFlags){
         if(givenFlags.size() < 2)
             throw new IllegalArgumentException("Error choosing two flags. Given list only contains amount of flags: " + givenFlags.size());
 
         //TODO temp: selection should be optimized
-        ArrayList<Pair<FlagInfo, HardcodedFlag>> chosenFlags = new ArrayList<>();
+        ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> chosenFlags = new ArrayList<>();
         chosenFlags.add(givenFlags.get(0));
         chosenFlags.add(givenFlags.get(1));
 
