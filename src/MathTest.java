@@ -1,5 +1,5 @@
-import javafx.util.Pair;
 import objects.FlagInfo;
+import utilities.PairGeneric;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +53,8 @@ public class MathTest {
         hardcodedFlags.add(new HardcodedFlag(' ', 'c', 'b', 0, false, new double[]{0, 34}));
         hardcodedFlags.add(new HardcodedFlag(' ', 'c', ' ', 0, false, new double[]{0, 0}));
 
-        //Boundary flags
+
+        //Boundry flags
         //Left
         hardcodedFlags.add(new HardcodedFlag(' ', 'l', 't', 30, false, new double[]{-58, 30}));
         hardcodedFlags.add(new HardcodedFlag(' ', 'l', 't', 20, false, new double[]{-58, 20}));
@@ -97,39 +98,39 @@ public class MathTest {
         hardcodedFlags.add(new HardcodedFlag(' ', 'r', 'b', 10, false, new double[]{58, 10}));
         hardcodedFlags.add(new HardcodedFlag(' ', 'r', 'b', 20, false, new double[]{58, 20}));
         hardcodedFlags.add(new HardcodedFlag(' ', 'r', 'b', 30, false, new double[]{58, 30}));
-     }
+    }
 
     /** Returns the players position calculated on the given flags. */
     public double[] getPlayerPosition(ArrayList<FlagInfo> flagSeeObjects){
         // identify two hardcoded flags that the player can see
         // TODO: Optimize: stop at two flags found
-        ArrayList<Pair<FlagInfo, HardcodedFlag>> flagsPlayerSees = new ArrayList<>();
-        for (FlagInfo flagInfoSee : flagSeeObjects){
-            for (HardcodedFlag hardcodedFlag : hardcodedFlags){
-                if (flagInfoSee.isEqualTo(hardcodedFlag)){
-                    flagsPlayerSees.add(new Pair<>(flagInfoSee, hardcodedFlag));
+        ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> flagsPlayerSees = new ArrayList<>();
+        for(FlagInfo flagInfoSee : flagSeeObjects){
+            for(HardcodedFlag hardcodedFlag : hardcodedFlags){
+                if(flagInfoSee.isEqualTo(hardcodedFlag)){
+                    flagsPlayerSees.add(new PairGeneric<>(flagInfoSee, hardcodedFlag));
                 }
             }
         }
 
-        ArrayList<Pair<FlagInfo, HardcodedFlag>> chosenFlags;
-        if (flagsPlayerSees.size() < 2){
+        ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> chosenFlags;
+        if(flagsPlayerSees.size() < 2){
             return null; //does not see enough hardcoded flags
-        } else {
+        }else{
             chosenFlags = pickTwoFlags(flagsPlayerSees);
         }
 
         //Get hardcoded pos of the two chosen flags
-        double[] chosenFlagOnePosition = chosenFlags.get(0).getValue().position;
-        double[] chosenFlagTwoPosition = chosenFlags.get(1).getValue().position;
+        double[] chosenFlagOnePosition = chosenFlags.get(0).getSecond().position;
+        double[] chosenFlagTwoPosition = chosenFlags.get(1).getSecond().position;
 
-        //System.out.println("Chosen flag positions: " + chosenFlags.get(0).getIdentifier() + ": " + chosenFlagOnePosition[0] + ";" + chosenFlagOnePosition[1] + " " + chosenFlags.get(1).getIdentifier() + ": " + chosenFlagTwoPosition[0] + ";" + chosenFlagTwoPosition[1]);
+        //System.out.println("Chosen flag positons: " + chosenFlags.get(0).getIdentifier() + ": " + chosenFlagOnePosition[0] + ";" + chosenFlagOnePosition[1] + " " + chosenFlags.get(1).getIdentifier() + ": " + chosenFlagTwoPosition[0] + ";" + chosenFlagTwoPosition[1]);
 
         // Get player position // Results in two possibilities
         double[] playerPosition = getIntersections(
-                chosenFlagOnePosition[0], chosenFlagOnePosition[1], chosenFlags.get(0).getKey().m_distance,
-                chosenFlagTwoPosition[0], chosenFlagTwoPosition[1], chosenFlags.get(1).getKey().m_distance);
-        if (playerPosition == null){
+                chosenFlagOnePosition[0], chosenFlagOnePosition[1], chosenFlags.get(0).getFirst().m_distance,
+                chosenFlagTwoPosition[0], chosenFlagTwoPosition[1], chosenFlags.get(1).getFirst().m_distance);
+        if(playerPosition == null){
             return null;
         }
 
@@ -146,17 +147,17 @@ public class MathTest {
         boolean posOneOutOfBounds = isCoordinateOutOfBounds(positionPossibilityOne);
         boolean posTwoOutOfBounds = isCoordinateOutOfBounds(positionPossibilityTwo);
 
-        if (posOneOutOfBounds && posTwoOutOfBounds){
+        if(posOneOutOfBounds && posTwoOutOfBounds){
             return null; //Both coordinates are out of bounds
         }
 
-        if (!posOneOutOfBounds && !posTwoOutOfBounds){
+        if(!posOneOutOfBounds && !posTwoOutOfBounds){
             return null; //Both coordinates are inside of bounds //Todo - how to decide?! Does it happen?
         }
 
-        if (posOneOutOfBounds){
+        if(posOneOutOfBounds){
             return positionPossibilityTwo;
-        } else {
+        }else{
             return positionPossibilityOne;
         }
     }
@@ -166,11 +167,11 @@ public class MathTest {
         int maxAbsX = 58;
         int maxAbsY = 39;
 
-        if (Math.abs(coordinate[0]) > maxAbsX){
+        if(Math.abs(coordinate[0]) > maxAbsX){
             return true;
         }
 
-        if (Math.abs(coordinate[1]) > maxAbsY) {
+        if(Math.abs(coordinate[1]) > maxAbsY) {
             return true;
         }
 
@@ -180,21 +181,21 @@ public class MathTest {
     /** Takes a list of flag identifiers, finds the hardcoded flag with the same identifiers and returns its position.
      //TODO is this needed? */
     private double[] getPosOfFlagFromIdentifiers(HardcodedFlag givenFlag){
-        for (HardcodedFlag hardcodedFlag : hardcodedFlags){
+        for(HardcodedFlag hardcodedFlag : hardcodedFlags){
             String hardcodedFlagIdentifier = hardcodedFlag.getIdentifier();
-            if (hardcodedFlagIdentifier.length() != givenFlag.getIdentifier().length())
+            if(hardcodedFlagIdentifier.length() != givenFlag.getIdentifier().length())
                 continue;
 
             boolean isMatching = true;
-            for (int i = 0; i < givenFlag.getIdentifier().length(); i++){
+            for(int i = 0; i < givenFlag.getIdentifier().length(); i++){
 
-                if (hardcodedFlagIdentifier.equals(givenFlag.getIdentifier())){
+                if(hardcodedFlagIdentifier.equals(givenFlag.getIdentifier())){
                     isMatching = false;
                     break;
                 }
             }
 
-            if (isMatching){
+            if(isMatching){
                 return hardcodedFlag.position;
             }
         }
@@ -204,14 +205,14 @@ public class MathTest {
     }
 
     /** Takes a list of flags and returns two of them.
-    * These should be picked with a specific policy
-    * TODO Improve to select closest flags? */
-    private ArrayList<Pair<FlagInfo, HardcodedFlag>> pickTwoFlags(ArrayList<Pair<FlagInfo, HardcodedFlag>> givenFlags){
-        if (givenFlags.size() < 2)
+     * These should be picked with a specific policy
+     * TODO Improve to select closest flags? */
+    private ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> pickTwoFlags(ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> givenFlags){
+        if(givenFlags.size() < 2)
             throw new IllegalArgumentException("Error choosing two flags. Given list only contains amount of flags: " + givenFlags.size());
 
         //TODO temp: selection should be optimized
-        ArrayList<Pair<FlagInfo, HardcodedFlag>> chosenFlags = new ArrayList<>();
+        ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> chosenFlags = new ArrayList<>();
         chosenFlags.add(givenFlags.get(0));
         chosenFlags.add(givenFlags.get(1));
 
@@ -219,24 +220,24 @@ public class MathTest {
     }
 
     /** Returns the coordinates of the third point in a triangle.
-    * Params: x0, y0 = point A and r0 is its distance to the point C (unknown location)
-    * Params: x1, y1 = point B and r1 is its distance to the point C (unknown location)
-    * https://stackoverflow.com/questions/55816902/finding-the-intersection-of-two-circles */
+     * Params: x0, y0 = point A and r0 is its distance to the point C (unknown location)
+     * Params: x1, y1 = point B and r1 is its distance to the point C (unknown location)
+     * https://stackoverflow.com/questions/55816902/finding-the-intersection-of-two-circles */
     private double[] getIntersections(double x0, double y0, double r0, double x1, double y1, double r1){
         double d = Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
 
         // non intersecting
-        if (d > r0 + r1){
+        if(d > r0 + r1){
             return null;
         }
 
         // One circle within other
-        if (d < Math.abs(r0 - r1)){
+        if(d < Math.abs(r0 - r1)){
             return null;
         }
 
         // coincident circles
-        if (d == 0 && r0 == r1){
+        if(d == 0 && r0 == r1){
             return null;
         }
 
