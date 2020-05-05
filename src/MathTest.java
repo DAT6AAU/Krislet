@@ -98,7 +98,7 @@ public class MathTest {
         hardcodedFlags.add(new HardcodedFlag(' ', 'r', 'b', 10, false, new double[]{58, 10}));
         hardcodedFlags.add(new HardcodedFlag(' ', 'r', 'b', 20, false, new double[]{58, 20}));
         hardcodedFlags.add(new HardcodedFlag(' ', 'r', 'b', 30, false, new double[]{58, 30}));
-     }
+    }
 
     /** Returns the players position calculated on the given flags. */
     public double[] getPlayerPosition(ArrayList<FlagInfo> flagSeeObjects){
@@ -205,8 +205,10 @@ public class MathTest {
     }
 
     /** Takes a list of flags and returns two of them.
+
     * These should be picked with a specific policy
     * TODO Improve to select closest flags? */
+
     private ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> pickTwoFlags(ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> givenFlags){
         if(givenFlags.size() < 2)
             throw new IllegalArgumentException("Error choosing two flags. Given list only contains amount of flags: " + givenFlags.size());
@@ -220,9 +222,9 @@ public class MathTest {
     }
 
     /** Returns the coordinates of the third point in a triangle.
-    * Params: x0, y0 = point A and r0 is its distance to the point C (unknown location)
-    * Params: x1, y1 = point B and r1 is its distance to the point C (unknown location)
-    * https://stackoverflow.com/questions/55816902/finding-the-intersection-of-two-circles */
+     * Params: x0, y0 = point A and r0 is its distance to the point C (unknown location)
+     * Params: x1, y1 = point B and r1 is its distance to the point C (unknown location)
+     * https://stackoverflow.com/questions/55816902/finding-the-intersection-of-two-circles */
     private double[] getIntersections(double x0, double y0, double r0, double x1, double y1, double r1){
         double d = Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
 

@@ -9,10 +9,12 @@
 //
 //********************************************
 
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.regex.*;
+import java.awt.geom.Point2D;
 
 
 //***************************************************************************
@@ -24,15 +26,21 @@ class Krislet {
     private DatagramSocket socket; // Socket to communicate with server
     private InetAddress host;    // Server address
     private int port;    // server port
-    private String teamName;
-    private Brain brain; // input for sensor information
-    private boolean playing; // controls the MainLoop todo naming?
+    private static final int MSG_SIZE = 4096;    // Size of socket buffer
+
     private Pattern message_pattern = Pattern.compile("^\\((\\w+?)\\s.*");
     private Pattern hear_pattern = Pattern.compile("^\\(hear\\s(\\w+?)\\s(\\w+?)\\s(.*)\\).*");
     //private Pattern coach_pattern = Pattern.compile("coach");
 
-    private static final int MSG_SIZE = 4096;    // Size of socket buffer
+    private String teamName;
+    private Brain brain; // input for sensor information
+    private boolean playing; // controls the MainLoop todo naming?
 
+    private int playerNumber;
+    private Point2D.Double startingCoordinate;
+
+
+    /*
     //---------------------------------------------------------------------------
     // The main application function.
     // Command line format:
@@ -93,16 +101,19 @@ class Krislet {
         // enter main loop
         player.mainLoop();
     }
+    */
 
     //---------------------------------------------------------------------------
     // This constructor opens socket for  connection with server
-    public Krislet(InetAddress host, int port, String teamName)
+    public Krislet(InetAddress host, int port, String teamName, Point2D.Double startingCoordinate)
             throws SocketException {
         this.socket = new DatagramSocket();
         this.host = host;
         this.port = port;
         this.teamName = teamName;
         this.playing = true;
+
+        this.startingCoordinate = startingCoordinate;
     }
 
     //---------------------------------------------------------------------------
@@ -199,7 +210,8 @@ class Krislet {
                 teamName,
                 m.group(1).charAt(0),
                 Integer.parseInt(m.group(2)),
-                m.group(3));
+                m.group(3),
+                startingCoordinate);
     }
 
     //===========================================================================

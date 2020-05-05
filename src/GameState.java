@@ -39,7 +39,7 @@ public class GameState {
     }
 
     public Pair<Integer, Integer> fieldCoordinateToCellIndex(double fieldCoordinateX, double fieldCoordinateY){
-        if(isCoordinateOutOfBounds(fieldCoordinateX, fieldCoordinateY)){
+        if (isCoordinateOutOfBounds(fieldCoordinateX, fieldCoordinateY)){
             throw new IllegalArgumentException(); //TODO Handle?
         }
 
@@ -56,12 +56,13 @@ public class GameState {
         return isCoordinateOutOfBounds(cellCoordinates.getKey(), cellCoordinates.getValue());
     }
 
+    // TODO: skal de to iffer ikke returne true?
     private boolean isCoordinateOutOfBounds(int cellX, int cellY){
-        if(cellX < 0 || cellY < 0) {
+        if (cellX < 0 || cellY < 0) {
             return false;
         }
 
-        if(cellX > grid_vertial_count || cellY > grid_horizontal_count) {
+        if (cellX > grid_vertial_count || cellY > grid_horizontal_count) {
             return false;
         }
 
