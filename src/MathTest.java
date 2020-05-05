@@ -205,8 +205,10 @@ public class MathTest {
     }
 
     /** Takes a list of flags and returns two of them.
-     * These should be picked with a specific policy
-     * TODO Improve to select closest flags? */
+
+    * These should be picked with a specific policy
+    * TODO Improve to select closest flags? */
+
     private ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> pickTwoFlags(ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> givenFlags){
         if(givenFlags.size() < 2)
             throw new IllegalArgumentException("Error choosing two flags. Given list only contains amount of flags: " + givenFlags.size());
