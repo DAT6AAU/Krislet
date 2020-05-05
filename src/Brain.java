@@ -10,6 +10,7 @@
 
 import objects.ObjectInfo;
 
+import java.awt.geom.Point2D;
 import java.lang.Math;
 import java.util.regex.*;
 
@@ -19,6 +20,9 @@ class Brain extends Thread {
     private char side;
     volatile private boolean timeOver;
     private String playMode;
+
+    private int playerNumber;
+    private Point2D.Double startingCoordinate;
 
     ObjectInfo ball;
     ObjectInfo goal_opponent;
@@ -30,7 +34,7 @@ class Brain extends Thread {
     //---------------------------------------------------------------------------
     // - stores connection to Krislet
     // - starts thread for this object
-    public Brain(Krislet krislet, String team, char side, int number, String playMode) {
+    public Brain(Krislet krislet, String team, char side, int number, String playMode, Point2D.Double startingCoordinate) {
         this.timeOver = false;
         this.krislet = krislet;
         memory = new Memory();
@@ -38,6 +42,9 @@ class Brain extends Thread {
         this.side = side; // better naming or description
         // number = number;
         this.playMode = playMode;
+
+        this.startingCoordinate = startingCoordinate;
+
         start();
     }
 
@@ -71,14 +78,24 @@ class Brain extends Thread {
 
         // kickoff
         while (!timeOver) {
+            // TODO: skal slettes
+            double[] playerPos = mathTest.getPlayerPosition(memory.getFlagInfoList());
+            if (playerPos != null){
+                System.out.println(playerPos[0] + " " + playerPos[1]);
+            } else {
+                System.out.println("Player pos not found!");
+            }
+            /* /
+            // TODO: skal slettes
+            boerneFodbold();
+            / */
+
+
             //update() #info fra dataklassen (sense_body og score)
 
-
-            double[] playerPos = mathTest.getPlayerPosition(memory.getFlagInfoList());
-            if(playerPos != null){
-                System.out.println(playerPos[0] + " " + playerPos[1]);
-            }else{
-                System.out.println("Player pos not found!");
+            // if game has been stopped, reset formation
+            if (Pattern.matches("^before_kick_off.*", playMode)){
+                setupFormation();
             }
 
             updateCurrentObjective();
@@ -86,10 +103,6 @@ class Brain extends Thread {
 
             nextCommand = null;
             selectCommandForNextCycle();
-
-            //
-            boerneFodbold();
-            //
 
             if (nextCommand != null) {
                 krislet.send("(" + nextCommand + ")");
@@ -123,13 +136,22 @@ class Brain extends Thread {
     private void selectCommandForNextCycle() {
     }
 
-
     private void setupFormation() {
+        //todo if startingCoordinate is on the wrong side of the field, mirrorCoordinate()
+        krislet.send("(move " + startingCoordinate.getX() + " " + startingCoordinate.getY() + ")");
+
+
+        // TODO: skal slettes
+        /*
         // Place player randomly on field TODO: change
         if (Pattern.matches("^before_kick_off.*", playMode)) {
             krislet.move(-Math.random() * 52.5, 34 - Math.random() * 68.0);
             //krislet.move(-20, -20); //TODO: line for controlling start position
         }
+
+         */
+        //
+
     }
 
     private void findObject(ObjectInfo obj) {

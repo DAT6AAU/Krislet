@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.net.InetAddress;
+import java.awt.geom.Point2D;
 
 public class Runner {
 
@@ -22,9 +23,12 @@ class KrisletThread extends Thread {
         int port = 6000;
         String team = "Krislet";
         Krislet player = null;
+
+        Point2D.Double startingCoordinate = new Point2D.Double(1, 4);
+
         try {
-            player = new Krislet(InetAddress.getByName(hostName),
-                    port, team);
+            player = new Krislet(InetAddress.getByName(hostName), port, team, startingCoordinate);
+
             player.mainLoop();
         } catch (IOException e) {
             e.printStackTrace();
