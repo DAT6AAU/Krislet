@@ -1,9 +1,12 @@
-import javafx.util.Pair;
+//import javafx.util.Pair;
+
+import java.util.ArrayList;
+
 import objects.BallInfo;
 import objects.ObjectInfo;
 import objects.ObjectType;
 
-import java.util.ArrayList;
+import utilities.PairGeneric;
 
 public class GameState {
 
@@ -24,8 +27,8 @@ public class GameState {
     }
 
     public boolean addObjectToGrid(double fieldCoordinateX, double fieldCoordinateY, ObjectInfo objectInfo){
-        Pair<Integer, Integer> cellCoordinates = fieldCoordinateToCellIndex(fieldCoordinateX, fieldCoordinateY);
-        return addObjectToGrid(cellCoordinates.getKey(), cellCoordinates.getValue(), objectInfo);
+        PairGeneric<Integer, Integer> cellCoordinates = fieldCoordinateToCellIndex(fieldCoordinateX, fieldCoordinateY);
+        return addObjectToGrid(cellCoordinates.getFirst(), cellCoordinates.getSecond(), objectInfo);
     }
 
     public boolean addObjectToGrid(int cellX, int cellY, ObjectInfo objectInfo){
@@ -38,12 +41,12 @@ public class GameState {
         return true;
     }
 
-    public Pair<Integer, Integer> fieldCoordinateToCellIndex(double fieldCoordinateX, double fieldCoordinateY){
+    public PairGeneric<Integer, Integer> fieldCoordinateToCellIndex(double fieldCoordinateX, double fieldCoordinateY){
         if (isCoordinateOutOfBounds(fieldCoordinateX, fieldCoordinateY)){
             throw new IllegalArgumentException(); //TODO Handle?
         }
 
-        return new Pair<Integer, Integer>((int)(fieldCoordinateX/grid_horizontal_count), (int)(fieldCoordinateY/grid_vertial_count));
+        return new PairGeneric<Integer, Integer>((int)(fieldCoordinateX/grid_horizontal_count), (int)(fieldCoordinateY/grid_vertial_count));
     }
 
     /*
@@ -52,8 +55,8 @@ public class GameState {
     }*/
 
     private boolean isCoordinateOutOfBounds(double fieldCoordinateX, double fieldCoordinateY){
-        Pair<Integer, Integer> cellCoordinates = fieldCoordinateToCellIndex(fieldCoordinateX, fieldCoordinateY);
-        return isCoordinateOutOfBounds(cellCoordinates.getKey(), cellCoordinates.getValue());
+        PairGeneric<Integer, Integer> cellCoordinates = fieldCoordinateToCellIndex(fieldCoordinateX, fieldCoordinateY);
+        return isCoordinateOutOfBounds(cellCoordinates.getFirst(), cellCoordinates.getSecond());
     }
 
     // TODO: skal de to iffer ikke returne true?
