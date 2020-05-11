@@ -1,0 +1,18 @@
+<diagram program="umletino" version="14.3.0"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>120</x><y>400</y><w>150</w><h>160</h></coordinates><panel_attributes>Krislet
+--
+move
+turn
+turn_neck
+dash
+kick
+say
+changeView
+bye</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>850</x><y>360</y><w>130</w><h>30</h></coordinates><panel_attributes>ObjectInfo.java</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>870</x><y>410</y><w>100</w><h>30</h></coordinates><panel_attributes>ObjectInfo</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>870</x><y>460</y><w>100</w><h>30</h></coordinates><panel_attributes>PlayerInfo</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>870</x><y>510</y><w>100</w><h>30</h></coordinates><panel_attributes>GoalInfo</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>870</x><y>560</y><w>100</w><h>30</h></coordinates><panel_attributes>BallInfo</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>870</x><y>610</y><w>100</w><h>30</h></coordinates><panel_attributes>FlagInfo</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>870</x><y>660</y><w>100</w><h>30</h></coordinates><panel_attributes>LineInfo</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>350</x><y>400</y><w>160</w><h>160</h></coordinates><panel_attributes>Brain
+--
+see
+hear
+hear</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>550</x><y>390</y><w>180</w><h>210</h></coordinates><panel_attributes>Memory
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1100</x><y>400</y><w>160</w><h>100</h></coordinates><panel_attributes>SoccerParams
+--
+Hvorfor er den er?
+Tror den kan slettes.</panel_attributes><additional_attributes></additional_attributes></element></diagram>
