@@ -21,29 +21,29 @@ public class Runner {
             player.start();
         }*/
 
-        KrisletThread player1 = new KrisletThread(-1,-1, teamName);
-        KrisletThread player2 = new KrisletThread(-10,-10, teamName);
-        KrisletThread player3 = new KrisletThread(-20,-20, teamName);
-        KrisletThread player4 = new KrisletThread(-10,-20, teamName);
-        KrisletThread player5 = new KrisletThread(-20,-10, teamName);
-        KrisletThread player6 = new KrisletThread(-30,-30, teamName);
-        KrisletThread player7 = new KrisletThread(-30,-10, teamName);
-        KrisletThread player8 = new KrisletThread(-10,-30, teamName);
-        KrisletThread player9 = new KrisletThread(-20,-30, teamName);
-        KrisletThread player10 = new KrisletThread(-5,-30, teamName);
-        KrisletThread player11 = new KrisletThread(-15,-30, teamName);
+        KrisletThread player1 = new KrisletThread(-1,-33, teamName);
+        KrisletThread player2 = new KrisletThread(-1,-5, teamName);
+        KrisletThread player3 = new KrisletThread(-15,-5, teamName);
+        KrisletThread player4 = new KrisletThread(-19,3, teamName);
+        KrisletThread player5 = new KrisletThread(-33,0, teamName);
+        KrisletThread player6 = new KrisletThread(-23,15, teamName);
+        KrisletThread player7 = new KrisletThread(-36,20, teamName);
+        KrisletThread player8 = new KrisletThread(-43,20, teamName);
+        KrisletThread player9 = new KrisletThread(-50,0, teamName);
+        KrisletThread player10 = new KrisletThread(-51,33, teamName);
+        KrisletThread player11 = new KrisletThread(-30,33, teamName);
 
         player1.start();
-        //player2.start();
-        //player3.start();
-        //player4.start();
-        //player5.start();
-        //player6.start();
-        //player7.start();
-        //player8.start();
-        //player9.start();
-        //player10.start();
-        //player11.start();
+        player2.start();
+        player3.start();
+        player4.start();
+        player5.start();
+        player6.start();
+        player7.start();
+        player8.start();
+        player9.start();
+        player10.start();
+        player11.start();
     }
 }
 
