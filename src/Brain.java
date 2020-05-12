@@ -73,85 +73,135 @@ class Brain extends Thread {
     // ************************************************
 
     public void run() {
-        // before kickoff
-        setupFormation();
 
-        // kickoff
-        while (!timeOver) {
-            // TODO: skal slettes
+        while (true){
+            nextCommand = null;
+
+            //UpdatePosition();
             double[] playerPos = mathTest.getPlayerPosition(memory.getFlagInfoList());
             if (playerPos != null){
                 System.out.println(playerPos[0] + " " + playerPos[1]);
             } else {
                 System.out.println("Player pos not found!");
             }
-            /* /
-            // TODO: skal slettes
-            boerneFodbold();
-            / */
+            //UpdateDirection();
 
+            switch (playMode){
+                case "before_kick_off":
+                    setupFormation();
+                    //beforeKickOff();
+                    break;
+                case "kick_off_l":
+                    boerneFodbold();
+                    break;
+                case "kick_off_r":
+                    boerneFodbold();
+                    break;
+                case "play_on":
+                    boerneFodbold();
+                    //playOn();
+                    break;
+                case "kick_in_l":
+                    //kickIn("l");
+                    break;
+                case "kick_in_r":
+                    //kickIn("r");
+                    break;
+                case "corner_kick_l":
+                    //cornerKick("l");
+                    break;
+                case "corner_kick_r":
+                    //cornerKick("r");
+                    break;
+                case "goal_kick_l":
+                    //goalKick("l");
+                    break;
+                case "goal_kick_r":
+                    //goalKick("r");
+                    break;
+                case "foul_charge_l":
+                    //foulCharge("l");
+                    break;
+                case "foul_charge_r":
+                    //foulcharge("r")
+                    break;
+                case "back_pass_l":
+                    //backPass("l");
+                    break;
+                case "back_pass_r":
+                    //backPass("l");
+                    break;
+                case "indirect_free_kick_l":
+                    //indirecFreeKick("l)");
+                    break;
+                case "indirect_free_kick_r":
+                    //indirecFreeKick("r)");
+                    break;
+                case "half_time":
+                    break;
 
-            //update() #info fra dataklassen (sense_body og score)
+                case "time_over":
+                    //timeOver();
+                    krislet.bye();
+                    break;
+                default:
+                    // todo something
+                    break;
 
-            // if game has been stopped, reset formation
-            if (Pattern.matches("^before_kick_off.*", playMode)){
-                setupFormation();
             }
-
-            updateCurrentObjective();
-            updateCurrentAction();
-
-            nextCommand = null;
-            selectCommandForNextCycle();
 
             if (nextCommand != null) {
                 krislet.send("(" + nextCommand + ")");
                 //do the thing
             }
 
-            // sleep one step to ensure that we will not send
-            // two commands in one cycle.
-            waitForNextCycle();
+            //waitForNextCycle();
         }
 
+        /*
+        // kickoff
+        while (!timeOver) {
+
+            selectCommandForNextCycle();
+            // TODO: skal slettes
+            boerneFodbold();
+
+            //update() #info fra dataklassen (sense_body og score)
+
+            updateCurrentObjective();
+            updateCurrentAction();
+
+
+
+            // sleep one step to ensure that we will not send
+            // two commands in one cycle.
+            //waitForNextCycle();
+        }
+        */
         // after kickoff
-        krislet.bye();
+
     }
 
-    private void updateCurrentObjective() {
+    //private void updateCurrentObjective() {
         // offense
         // defense
         // can be extended later
-    }
+    //}
 
-    private void updateCurrentAction() {
+    //private void updateCurrentAction() {
         // findObject(Object)
         // toTowards(Object
         // moveTowards(Object
         // moveBetween(object, object)
 		// skip()
+    //}
 
-    }
-
-    private void selectCommandForNextCycle() {
-    }
+    //private void selectCommandForNextCycle() {
+    //}
 
     private void setupFormation() {
         //todo if startingCoordinate is on the wrong side of the field, mirrorCoordinate()
         krislet.send("(move " + startingCoordinate.getX() + " " + startingCoordinate.getY() + ")");
-
-
-        // TODO: skal slettes
-        /*
-        // Place player randomly on field TODO: change
-        if (Pattern.matches("^before_kick_off.*", playMode)) {
-            krislet.move(-Math.random() * 52.5, 34 - Math.random() * 68.0);
-            //krislet.move(-20, -20); //TODO: line for controlling start position
-        }
-
-         */
-        //
-
     }
 
     private void findObject(ObjectInfo obj) {
@@ -203,9 +253,6 @@ class Brain extends Thread {
         }
     }
 
-
-
-
     /// TODO: check if used
 
     //---------------------------------------------------------------------------
@@ -222,8 +269,11 @@ class Brain extends Thread {
     //---------------------------------------------------------------------------
     // This function receives hear information from referee
     public void hear(int time, String message) {
+        playMode = message;
+
+        /*
         if (message.compareTo("time_over") == 0) {
             timeOver = true;
-        }
+        }*/
     }
 }
