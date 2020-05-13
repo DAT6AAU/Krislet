@@ -1,6 +1,7 @@
 import objects.FlagInfo;
 import utilities.PairGeneric;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -103,15 +104,7 @@ public class MathTest {
     /** Returns the players position calculated on the given flags. */
     public double[] getPlayerPosition(ArrayList<FlagInfo> flagSeeObjects){
         // identify two hardcoded flags that the player can see
-        // TODO: Optimize: stop at two flags found
-        ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> flagsPlayerSees = new ArrayList<>();
-        for(FlagInfo flagInfoSee : flagSeeObjects){
-            for(HardcodedFlag hardcodedFlag : hardcodedFlags){
-                if(flagInfoSee.isEqualTo(hardcodedFlag)){
-                    flagsPlayerSees.add(new PairGeneric<>(flagInfoSee, hardcodedFlag));
-                }
-            }
-        }
+        ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> flagsPlayerSees = getHardcodedFlagsThatPlayerSees(2, flagSeeObjects);
 
         ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> chosenFlags;
         if(flagsPlayerSees.size() < 2){
@@ -160,6 +153,22 @@ public class MathTest {
         }else{
             return positionPossibilityOne;
         }
+    }
+
+    private ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> getHardcodedFlagsThatPlayerSees(int desiredNumberOfFlags, ArrayList<FlagInfo> flagSeeObjects){
+        ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> flagsPlayerSees = new ArrayList<>();
+        for(FlagInfo flagInfoSee : flagSeeObjects){
+            for(HardcodedFlag hardcodedFlag : hardcodedFlags){
+                if(flagInfoSee.isEqualTo(hardcodedFlag)){
+                    flagsPlayerSees.add(new PairGeneric<>(flagInfoSee, hardcodedFlag));
+                }
+                if(flagsPlayerSees.size() == desiredNumberOfFlags){
+                    return flagsPlayerSees;
+                }
+            }
+        }
+
+        return null; //does not see enough hardcoded flags
     }
 
     /** Returns true if the given coordinate is out of bounds. */
