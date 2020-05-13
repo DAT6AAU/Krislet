@@ -35,8 +35,8 @@ public class  Movement {
     /** Checks if the players current position matches the given coordinates. Returns true if player is at pos. */
     private boolean isAtPosition(double destX, double destY){
 
-        double xDifAbs = Math.abs(destX - brain.myPosition[0]);
-        double yDifAbs = Math.abs(destY - brain.myPosition[1]);
+        double xDifAbs = Math.abs(destX - brain.currentPosition[0]);
+        double yDifAbs = Math.abs(destY - brain.currentPosition[1]);
 
         return xDifAbs <= positionDelta && yDifAbs <= positionDelta;
     }
