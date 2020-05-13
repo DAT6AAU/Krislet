@@ -207,7 +207,6 @@ class Krislet {
 
         // initialize player's brain
         brain = new Brain(this,
-                teamName,
                 m.group(1).charAt(0),
                 Integer.parseInt(m.group(2)),
                 m.group(3),

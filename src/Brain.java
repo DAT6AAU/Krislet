@@ -18,73 +18,63 @@ class Brain extends Thread {
     private Krislet krislet; // robot which is controlled by this brain
     private Memory memory; // place where all information is stored
     private char side;
-    volatile private boolean timeOver;
+    volatile private boolean timeOver; // todo kan slettes??
     private String playMode;
 
     private int playerNumber;
     private Point2D.Double startingCoordinate;
-
-    ObjectInfo ball;
-    ObjectInfo goal_opponent;
+    double[] currentPosition;
 
     String nextCommand; // todo maybe an enum?
 
+    String currentAction;
+    boolean isCurrentActionComplete;
+
+    ObjectInfo ball; //todo can maybe be deleted
+    ObjectInfo goal_opponent; //todo can maybe be deleted
+
     private MathTest mathTest = new MathTest();
     
-    //---------------------------------------------------------------------------
-    // - stores connection to Krislet
-    // - starts thread for this object
-    public Brain(Krislet krislet, String team, char side, int number, String playMode, Point2D.Double startingCoordinate) {
+
+
+    public Brain(Krislet krislet, char side, int number, String playMode, Point2D.Double startingCoordinate) {
         this.timeOver = false;
         this.krislet = krislet;
         memory = new Memory();
-        //team = team;
+
         this.side = side; // better naming or description
-        // number = number;
+        this.playerNumber = number;
         this.playMode = playMode;
 
         this.startingCoordinate = startingCoordinate;
 
         start();
     }
-
-    //---------------------------------------------------------------------------
-    // This is main brain function used to make decision
-    // In each cycle we decide which command to issue based on
-    // current situation. the rules are:
-    //
-    //	1. If you don't know where is ball then turn right and wait for new info
-    //
-    //	2. If ball is too far to kick it then
-    //		2.1. If we are directed towards the ball then go to the ball
-    //		2.2. else turn to the ball
-    //
-    //	3. If we don't know where is opponent goal then turn wait
-    //				and wait for new info
-    //
-    //	4. Kick ball
-    //
-    //	To ensure that we don't send commands to often after each cycle
-    //	we waits one simulator steps. (This of course should be done better)
-
-    // ***************  Improvements ******************
-    // Always know where the goal is.
-    // Move to a place on my side on a kick_off
-    // ************************************************
+    /* Possible values for playMode.
+                 "before_kick_off", "kick_off_l", "kick_off_r", "play_on",
+                "kick_in_l", "kick_in_r", "corner_kick_l", "corner_kick_r"
+                "goal_kick_l", "goal_kick_r", "foul_charge_l"
+                "foul_charge_r", "back_pass_l", "back_pass_r"
+                "indirect_free_kick_l", "indirect_free_kick_r", "half_time"
+                "time_over"
+     */
 
     public void run() {
-
         while (true){
+            // TODO for Testing. Be kind, Delete.
+            System.out.println(playMode);
+
+            // reset command to make sure not to resend last command even if action is complete.
             nextCommand = null;
 
             //UpdatePosition();
-            double[] playerPos = mathTest.getPlayerPosition(memory.getFlagInfoList());
-            if (playerPos != null){
-                System.out.println(playerPos[0] + " " + playerPos[1]);
-            } else {
-                System.out.println("Player pos not found!");
-            }
+            currentPosition = mathTest.getPlayerPosition(memory.getFlagInfoList());
+            
             //UpdateDirection();
+
+            UpdateObjective();
+
+            UpdateCurrentAction();
 
             switch (playMode){
                 case "before_kick_off":
@@ -92,13 +82,12 @@ class Brain extends Thread {
                     //beforeKickOff();
                     break;
                 case "kick_off_l":
-                    boerneFodbold();
+                    //kickOff_l("l")
                     break;
                 case "kick_off_r":
-                    boerneFodbold();
+                    //kickOff("r");
                     break;
                 case "play_on":
-                    boerneFodbold();
                     //playOn();
                     break;
                 case "kick_in_l":
@@ -145,9 +134,8 @@ class Brain extends Thread {
                     krislet.bye();
                     break;
                 default:
-                    // todo something
+                    // todo something?
                     break;
-
             }
 
             if (nextCommand != null) {
@@ -155,62 +143,33 @@ class Brain extends Thread {
                 //do the thing
             }
 
-            //waitForNextCycle();
-        }
-
-        /*
-        // kickoff
-        while (!timeOver) {
-
-            selectCommandForNextCycle();
-            // TODO: skal slettes
-            boerneFodbold();
-
-            //update() #info fra dataklassen (sense_body og score)
-
-            updateCurrentObjective();
-            updateCurrentAction();
-
-
-
             // sleep one step to ensure that we will not send
             // two commands in one cycle.
-            //waitForNextCycle();
+            waitForNextCycle();
         }
-        */
-        // after kickoff
-
     }
 
-    //private void updateCurrentObjective() {
+    private void UpdateObjective() {
         // offense
         // defense
         // can be extended later
-    //}
+    }
 
-    //private void updateCurrentAction() {
+    private void UpdateCurrentAction() {
         // findObject(Object)
         // toTowards(Object
         // moveTowards(Object
         // moveBetween(object, object)
 		// skip()
-    //}
+    }
 
     //private void selectCommandForNextCycle() {
     //}
 
     private void setupFormation() {
-        //todo if startingCoordinate is on the wrong side of the field, mirrorCoordinate()
-        krislet.send("(move " + startingCoordinate.getX() + " " + startingCoordinate.getY() + ")");
-    }
-
-    private void findObject(ObjectInfo obj) {
-        krislet.turn(40);
-        memory.waitForNewInfo(); // todo maybe remove. should only be called in memory
-    }
-
-    private void turnTowards(ObjectInfo obj) {
-        krislet.turn(obj.m_direction);
+        if (playMode == "before_kick_off"){
+            krislet.send("(move " + startingCoordinate.getX() + " " + startingCoordinate.getY() + ")");
+        }
     }
 
     private void waitForNextCycle() {
@@ -219,6 +178,12 @@ class Brain extends Thread {
         } catch (Exception e) {
 
         }
+    }
+
+    /*
+        private void findObject(ObjectInfo obj) {
+        krislet.turn(40);
+        memory.waitForNewInfo(); // todo maybe remove. should only be called in memory
     }
 
     private void boerneFodbold(){
@@ -230,7 +195,7 @@ class Brain extends Thread {
             // If ball is too far then turn to ball or
             // if we have correct direction then go to ball
             if (ball.m_direction != 0) {
-                turnTowards(ball);
+                movement.turnTowards(ball);
             } else {
                 nextCommand = "dash " + 10 * ball.m_distance;
                 //krislet.dash(10 * ball.m_distance);
@@ -252,21 +217,26 @@ class Brain extends Thread {
             }
         }
     }
+    */
 
-    /// TODO: check if used
 
-    //---------------------------------------------------------------------------
+    public void printCurrentPosition(){
+        if (currentPosition != null){
+            System.out.println(currentPosition[0] + " " + currentPosition[1]);
+        } else {
+            System.out.println("Player pos not found!");
+        }
+    }
+
     // This function sends see information
     public void see(VisualInfo info) {
         memory.store(info);
     }
 
-    //---------------------------------------------------------------------------
     // This function receives hear information from player
     public void hear(int time, int direction, String message) {
     }
 
-    //---------------------------------------------------------------------------
     // This function receives hear information from referee
     public void hear(int time, String message) {
         playMode = message;
