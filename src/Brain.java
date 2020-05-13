@@ -17,6 +17,7 @@ import java.util.regex.*;
 class Brain extends Thread {
     private Krislet krislet; // robot which is controlled by this brain
     private Memory memory; // place where all information is stored
+    private MathTest mathTest = new MathTest();
     private Movement movement;
     private char side;
     volatile private boolean timeOver; // todo kan slettes??
@@ -27,15 +28,17 @@ class Brain extends Thread {
     public double headAngle = 0;
     double[] currentPosition;
 
-    ObjectInfo ball; //todo can maybe be deleted
-    ObjectInfo goal_opponent; //todo can maybe be deleted
-
     String nextCommand; // todo maybe an enum?
 
     String currentAction;
     boolean isCurrentActionComplete;
 
-    private MathTest mathTest = new MathTest();
+
+
+    ObjectInfo ball; //todo can maybe be deleted
+    ObjectInfo goal_opponent; //todo can maybe be deleted
+
+
 
     public Brain(Krislet krislet, char side, int number, String playMode, Point2D.Double startingCoordinate) {
         this.timeOver = false;
@@ -64,6 +67,7 @@ class Brain extends Thread {
         while (true){
             // TODO for Testing. Be kind, Delete.
             System.out.println(playMode);
+            // TODO: Please stop deleting.
 
             // reset command to make sure not to resend last command even if action is complete.
             nextCommand = null;
@@ -75,8 +79,7 @@ class Brain extends Thread {
 
             UpdateObjective();
 
-            //UpdateCurrentAction(); // maybe only in
-
+            //UpdateCurrentAction(); // Maybe this is updated in switch.
             switch (playMode){
                 case "before_kick_off":
                     setupFormation();
@@ -89,7 +92,7 @@ class Brain extends Thread {
                     //kickOff("r");
                     break;
                 case "play_on":
-                    //playOn();
+                    playOn();
                     break;
                 case "kick_in_l":
                     //kickIn("l");
@@ -139,9 +142,11 @@ class Brain extends Thread {
                     break;
             }
 
+            //TurnActionIntoCommand()
+
+            //SendNextCommand()
             if (nextCommand != null) {
                 krislet.send("(" + nextCommand + ")");
-                //do the thing
             }
 
             // sleep one step to ensure that we will not send
@@ -161,18 +166,47 @@ class Brain extends Thread {
         // toTowards(Object
         // moveTowards(Object
         // moveBetween(object, object)
+        // distanceTo(object)
 		// skip()
     }
 
     private void playOn(){
 
+        ball = memory.getBallInfo();
+
+        // If you don't know where is ball then find it
+        if (ball == null) {
+            nextCommand = "turn" + 5;
+            //findObject(ball);
+            return;
+        }
+
+        // Move towards ball
+        if (ball.m_distance > 1.5){
+            if( ball.m_direction != 0 ){
+                nextCommand = "turn " + ball.m_direction;
+            }
+            else
+                nextCommand = "dash " + 10 * ball.m_distance;
+        }
+        else {
+            //findGoal
+            if (goal_opponent == null) {
+                if (side == 'l') {
+                    goal_opponent = memory.getGoalObj('r');
+                } else {
+                    goal_opponent = memory.getGoalObj('l');
+                }
+                nextCommand = "turn" + 5;
+            }
+            else {
+                nextCommand = "kick" + 100 + goal_opponent.m_direction;
+            }
+        }
     }
 
-    //private void selectCommandForNextCycle() {
-    //}
-
     private void setupFormation() {
-        if (playMode == "before_kick_off"){
+        if (playMode.equals("before_kick_off") ){
             krislet.send("(move " + startingCoordinate.getX() + " " + startingCoordinate.getY() + ")");
         }
     }
@@ -189,41 +223,7 @@ class Brain extends Thread {
         private void findObject(ObjectInfo obj) {
         krislet.turn(40);
         memory.waitForNewInfo(); // todo maybe remove. should only be called in memory
-    }
-
-    private void boerneFodbold(){
-        ball = memory.getBallInfo(); // måske rykkes ud som en fast variabel
-        if (ball == null) {
-            // If you don't know where is ball then find it
-            findObject(ball);
-        } else if (ball.m_distance > 1.0) {
-            // If ball is too far then turn to ball or
-            // if we have correct direction then go to ball
-            if (ball.m_direction != 0) {
-                movement.turnTowards(ball);
-            } else {
-                nextCommand = "dash " + 10 * ball.m_distance;
-                //krislet.dash(10 * ball.m_distance);
-            }
-        } else {
-            // We know where the ball is and we can kick it
-            // so look for goal
-            if (side == 'l') {
-                goal_opponent = memory.getGoalObj('r');
-            } else {
-                goal_opponent = memory.getGoalObj('l');
-            }
-
-            if (goal_opponent == null) {
-                findObject(goal_opponent); // giver ingen mening med null
-            } else {
-                nextCommand = "kick 100 " + goal_opponent.m_direction;
-                //krislet.kick(100, goal_opponent.m_direction);
-            }
-        }
-    }
-    */
-
+    } */
 
     public void printCurrentPosition(){
         if (currentPosition != null){
