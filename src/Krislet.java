@@ -38,7 +38,7 @@ class Krislet {
 
     private int playerNumber;
     private Point2D.Double startingCoordinate;
-
+    public double headAngle;
 
     /*
     //---------------------------------------------------------------------------
@@ -237,7 +237,25 @@ class Krislet {
             brain.see(info);
         } else if (m.group(1).compareTo("hear") == 0) {
             parseHear(message);
+        } else if(m.group(1).compareTo("sense_body") == 0){
+            parseSenseBody(message);
         }
+    }
+
+    private void parseSenseBody(String message){
+        headAngle = parseHeadAngle(message);
+    }
+
+    private double parseHeadAngle(String message){
+        String[] splitString = message.split(" ");
+        for(int i = 0; i < splitString.length; i++){
+            if(splitString[i].compareTo("(head_angle") == 0){
+                String headAngleValue = splitString[i+1];
+                return Double.parseDouble(headAngleValue.substring(0, headAngleValue.length() - 1));
+            }
+        }
+
+        throw new IllegalArgumentException();
     }
 
     //---------------------------------------------------------------------------
