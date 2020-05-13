@@ -17,6 +17,7 @@ import java.util.regex.*;
 class Brain extends Thread {
     private Krislet krislet; // robot which is controlled by this brain
     private Memory memory; // place where all information is stored
+    private Movement movement;
     private char side;
     volatile private boolean timeOver; // todo kan slettes??
     private String playMode;
@@ -34,14 +35,13 @@ class Brain extends Thread {
     String currentAction;
     boolean isCurrentActionComplete;
 
-
     private MathTest mathTest = new MathTest();
-
 
     public Brain(Krislet krislet, char side, int number, String playMode, Point2D.Double startingCoordinate) {
         this.timeOver = false;
         this.krislet = krislet;
         memory = new Memory();
+        movement = new Movement(this);
 
         this.side = side; // better naming or description
         this.playerNumber = number;
@@ -75,7 +75,7 @@ class Brain extends Thread {
 
             UpdateObjective();
 
-            UpdateCurrentAction();
+            //UpdateCurrentAction(); // maybe only in
 
             switch (playMode){
                 case "before_kick_off":
@@ -122,10 +122,10 @@ class Brain extends Thread {
                     //backPass("l");
                     break;
                 case "indirect_free_kick_l":
-                    //indirecFreeKick("l)");
+                    //indirectFreeKick("l)");
                     break;
                 case "indirect_free_kick_r":
-                    //indirecFreeKick("r)");
+                    //indirectFreeKick("r)");
                     break;
                 case "half_time":
                     break;
@@ -162,6 +162,10 @@ class Brain extends Thread {
         // moveTowards(Object
         // moveBetween(object, object)
 		// skip()
+    }
+
+    private void playOn(){
+
     }
 
     //private void selectCommandForNextCycle() {
