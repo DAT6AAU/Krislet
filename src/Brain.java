@@ -24,6 +24,9 @@ class Brain extends Thread {
     private int playerNumber;
     private Point2D.Double startingCoordinate;
 
+    public double headAngle = 0;
+    public double[] myPosition = {0, 0}; //TODO
+
     ObjectInfo ball;
     ObjectInfo goal_opponent;
 
