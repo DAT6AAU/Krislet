@@ -33,11 +33,8 @@ class Brain extends Thread {
     String currentAction;
     boolean isCurrentActionComplete;
 
-
-
     ObjectInfo ball; //todo can maybe be deleted
     ObjectInfo goal_opponent; //todo can maybe be deleted
-
 
 
     public Brain(Krislet krislet, char side, int number, String playMode, Point2D.Double startingCoordinate) {
@@ -66,7 +63,10 @@ class Brain extends Thread {
     public void run() {
         while (true){
             // TODO for Testing. Be kind, Delete.
-            System.out.println(playMode);
+            if (playerNumber == 1){
+                System.out.println(playMode);
+            }
+
             // TODO: Please stop deleting.
 
             // reset command to make sure not to resend last command even if action is complete.
@@ -176,7 +176,7 @@ class Brain extends Thread {
 
         // If you don't know where is ball then find it
         if (ball == null) {
-            nextCommand = "turn" + 5;
+            nextCommand = "turn " + 90;
             //findObject(ball);
             return;
         }
@@ -197,10 +197,10 @@ class Brain extends Thread {
                 } else {
                     goal_opponent = memory.getGoalObj('l');
                 }
-                nextCommand = "turn" + 5;
+                nextCommand = "turn " + 90;
             }
             else {
-                nextCommand = "kick" + 100 + goal_opponent.m_direction;
+                nextCommand = "kick " + 100 + " " + 45; //goal_opponent.m_direction;
             }
         }
     }
