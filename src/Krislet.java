@@ -231,6 +231,9 @@ class Krislet {
             throw new IOException(message);
         }
         if (m.group(1).compareTo("see") == 0) {
+            if(message.startsWith("(see 0)")){ //Temporary fix //Do not know why this happens.
+                return;
+            }
             VisualInfo info = new VisualInfo(message);
             info.parse();
             brain.see(info);
