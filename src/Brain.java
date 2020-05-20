@@ -8,12 +8,10 @@
 //    Modified by:      Edgar Acosta
 //    Date:             March 4, 2008
 
-import objects.FlagInfo;
 import objects.ObjectInfo;
 
 import java.awt.geom.Point2D;
 import java.lang.Math;
-import java.util.regex.*;
 
 class Brain extends Thread {
     private Krislet krislet; // robot which is controlled by this brain
@@ -37,7 +35,7 @@ class Brain extends Thread {
     boolean isCurrentActionComplete;
 
 
-    private MathTest mathTest = new MathTest();
+    private PlayerPhysicalEstimator playerPhysicalEstimator = new PlayerPhysicalEstimator();
     private static Movement movement;
 
 
@@ -52,7 +50,7 @@ class Brain extends Thread {
 
         this.startingCoordinate = startingCoordinate;
 
-        movement = new Movement(this, mathTest);
+        movement = new Movement(this, playerPhysicalEstimator);
 
         start();
     }
@@ -73,7 +71,7 @@ class Brain extends Thread {
             nextCommand = null;
 
             //UpdatePosition();
-            currentPosition = mathTest.getPlayerPosition(memory.getFlagInfoList());
+            currentPosition = playerPhysicalEstimator.getPlayerPosition(memory.getFlagInfoList());
 
             //UpdateDirection();
 
@@ -225,7 +223,7 @@ class Brain extends Thread {
 
     private void UpdatePosition() {
 
-        double[] result = mathTest.getPlayerPosition(memory.getFlagInfoList());
+        double[] result = playerPhysicalEstimator.getPlayerPosition(memory.getFlagInfoList());
         if(result != null)
             System.out.println(Math.floor(result[0]) + " " + Math.floor(result[1]));
         if(result != null){ //TODO should we use last known? Or acknowledge that we dont know?
@@ -238,7 +236,7 @@ class Brain extends Thread {
             return;
         }
 
-        Point2D.Double result = mathTest.getPlayerLookingDirection(memory.getFlagInfoList(), currentPosition);
+        Point2D.Double result = playerPhysicalEstimator.getPlayerLookingDirection(memory.getFlagInfoList(), currentPosition);
         //System.out.println(result);
         if(result != null){ //TODO should we use last known? Or acknowledge that we dont know?
             lookingDirectionVector = result;

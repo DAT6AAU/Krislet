@@ -4,7 +4,7 @@ import utilities.PairGeneric;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-public class MathTest {
+public class PlayerPhysicalEstimator {
 
     private final double maxFlagDistanceAllowed = 40; //Max dist to a flag that can be chosen
     private final boolean printGetPosDebugMsgs = false;
@@ -26,7 +26,7 @@ public class MathTest {
 
     private ArrayList<HardcodedFlag> hardcodedFlags = new ArrayList<>();
 
-    public MathTest() {
+    public PlayerPhysicalEstimator() {
         initializeHardcodedFlags();
     }
 

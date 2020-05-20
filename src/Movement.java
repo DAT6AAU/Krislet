@@ -3,7 +3,7 @@ import java.awt.geom.Point2D;
 public class Movement {
 
     private Brain brain;
-    private MathTest mathTest;
+    private PlayerPhysicalEstimator playerPhysicalEstimator;
 
     private final double positionDelta = 0.3;
     private final double lookingDirectionDelta = 10; //TODO
@@ -11,9 +11,9 @@ public class Movement {
 
     public ActionType currentAction = ActionType.NOTHING;
 
-    public Movement(Brain brain, MathTest mathTest) {
+    public Movement(Brain brain, PlayerPhysicalEstimator playerPhysicalEstimator) {
         this.brain = brain;
-        this.mathTest = mathTest;
+        this.playerPhysicalEstimator = playerPhysicalEstimator;
     }
 
     //Makes the player move to the coordinate
@@ -48,8 +48,8 @@ public class Movement {
 
         //Hvor meget skal jeg roterer for at kigge den ønskede retning??
 
-        Point2D.Double VecMeToDestOrigined = mathTest.getVectorMovedToZeroZero(new Point2D.Double(brain.currentPosition[0], brain.currentPosition[1]), new Point2D.Double(x, y));
-        double angle = mathTest.getAngleBetweenVector(brain.lookingDirectionVector, VecMeToDestOrigined);
+        Point2D.Double VecMeToDestOrigined = playerPhysicalEstimator.getVectorMovedToZeroZero(new Point2D.Double(brain.currentPosition[0], brain.currentPosition[1]), new Point2D.Double(x, y));
+        double angle = playerPhysicalEstimator.getAngleBetweenVector(brain.lookingDirectionVector, VecMeToDestOrigined);
 
         currentAction = ActionType.TURN_LEFT; //TODO should maybe not be left or right.. the angle could contain that info: -/+
         //currentAction.amount = angle; //TODO
@@ -59,8 +59,8 @@ public class Movement {
     }
 
     private boolean isLookingAt(double x, double y){
-        Point2D.Double VecMeToDestOrigined = mathTest.getVectorMovedToZeroZero(new Point2D.Double(brain.currentPosition[0], brain.currentPosition[1]), new Point2D.Double(x, y));
-        double angle = mathTest.getAngleBetweenVector(brain.lookingDirectionVector, VecMeToDestOrigined);
+        Point2D.Double VecMeToDestOrigined = playerPhysicalEstimator.getVectorMovedToZeroZero(new Point2D.Double(brain.currentPosition[0], brain.currentPosition[1]), new Point2D.Double(x, y));
+        double angle = playerPhysicalEstimator.getAngleBetweenVector(brain.lookingDirectionVector, VecMeToDestOrigined);
         System.out.println("Movement: isLookingAt: angleDiff: " + angle);
         return angle < lookingDirectionDelta;
     }
