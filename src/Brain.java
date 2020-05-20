@@ -12,155 +12,204 @@ import objects.ObjectInfo;
 
 import java.awt.geom.Point2D;
 import java.lang.Math;
-import java.util.regex.*;
 
 class Brain extends Thread {
     private Krislet krislet; // robot which is controlled by this brain
     private Memory memory; // place where all information is stored
+    private static Movement movement;
     private char side;
-    volatile private boolean timeOver;
+    volatile private boolean timeOver; // todo kan slettes??
     private String playMode;
 
     private int playerNumber;
     private Point2D.Double startingCoordinate;
-
-    ObjectInfo ball;
-    ObjectInfo goal_opponent;
+    public double headAngle = 0;
+    double[] currentPosition;
+    public Point2D.Double lookingDirectionVector;
 
     String nextCommand; // todo maybe an enum?
 
-    private MathTest mathTest = new MathTest();
-    
-    //---------------------------------------------------------------------------
-    // - stores connection to Krislet
-    // - starts thread for this object
-    public Brain(Krislet krislet, String team, char side, int number, String playMode, Point2D.Double startingCoordinate) {
+    String currentAction;
+    boolean isCurrentActionComplete;
+
+    private PlayerPhysicalEstimator playerPhysicalEstimator = new PlayerPhysicalEstimator();    
+
+    ObjectInfo ball; //todo can maybe be deleted
+    ObjectInfo goal_opponent; //todo can maybe be deleted
+
+
+    public Brain(Krislet krislet, char side, int number, String playMode, Point2D.Double startingCoordinate) {
         this.timeOver = false;
         this.krislet = krislet;
         memory = new Memory();
-        //team = team;
+        movement = new Movement(this, playerPhysicalEstimator);
+
         this.side = side; // better naming or description
-        // number = number;
+        this.playerNumber = number;
         this.playMode = playMode;
 
         this.startingCoordinate = startingCoordinate;
 
+        movement = new Movement(this, playerPhysicalEstimator);
+
         start();
     }
-
-    //---------------------------------------------------------------------------
-    // This is main brain function used to make decision
-    // In each cycle we decide which command to issue based on
-    // current situation. the rules are:
-    //
-    //	1. If you don't know where is ball then turn right and wait for new info
-    //
-    //	2. If ball is too far to kick it then
-    //		2.1. If we are directed towards the ball then go to the ball
-    //		2.2. else turn to the ball
-    //
-    //	3. If we don't know where is opponent goal then turn wait
-    //				and wait for new info
-    //
-    //	4. Kick ball
-    //
-    //	To ensure that we don't send commands to often after each cycle
-    //	we waits one simulator steps. (This of course should be done better)
-
-    // ***************  Improvements ******************
-    // Always know where the goal is.
-    // Move to a place on my side on a kick_off
-    // ************************************************
+    /* Possible values for playMode.
+                 "before_kick_off", "kick_off_l", "kick_off_r", "play_on",
+                "kick_in_l", "kick_in_r", "corner_kick_l", "corner_kick_r"
+                "goal_kick_l", "goal_kick_r", "foul_charge_l"
+                "foul_charge_r", "back_pass_l", "back_pass_r"
+                "indirect_free_kick_l", "indirect_free_kick_r", "half_time"
+                "time_over"
+     */
 
     public void run() {
-        // before kickoff
-        setupFormation();
-
-        // kickoff
-        while (!timeOver) {
-            // TODO: skal slettes
-            double[] playerPos = mathTest.getPlayerPosition(memory.getFlagInfoList());
-            if (playerPos != null){
-                System.out.println(playerPos[0] + " " + playerPos[1]);
-            } else {
-                System.out.println("Player pos not found!");
-            }
-            /* /
-            // TODO: skal slettes
-            boerneFodbold();
-            / */
-
-
-            //update() #info fra dataklassen (sense_body og score)
-
-            // if game has been stopped, reset formation
-            if (Pattern.matches("^before_kick_off.*", playMode)){
-                setupFormation();
+        while (true){
+            // TODO for Testing. Be kind, Delete.
+            if (playerNumber == 1){
+                System.out.println(playMode);
             }
 
-            updateCurrentObjective();
-            updateCurrentAction();
+            // TODO: Please stop deleting.
 
+            // reset command to make sure not to resend last command even if action is complete.
             nextCommand = null;
-            selectCommandForNextCycle();
 
+            UpdatePosition();
+
+            UpdateDirection();
+
+            UpdateObjective();
+
+            //UpdateCurrentAction(); // Maybe this is updated in switch.
+            switch (playMode){
+                case "before_kick_off":
+                    setupFormation();
+                    //beforeKickOff();
+                    break;
+                case "kick_off_l":
+                    //kickOff_l("l")
+                    break;
+                case "kick_off_r":
+                    //kickOff("r");
+                    break;
+                case "play_on":
+                    playOn();
+                    break;
+                case "kick_in_l":
+                    //kickIn("l");
+                    break;
+                case "kick_in_r":
+                    //kickIn("r");
+                    break;
+                case "corner_kick_l":
+                    //cornerKick("l");
+                    break;
+                case "corner_kick_r":
+                    //cornerKick("r");
+                    break;
+                case "goal_kick_l":
+                    //goalKick("l");
+                    break;
+                case "goal_kick_r":
+                    //goalKick("r");
+                    break;
+                case "foul_charge_l":
+                    //foulCharge("l");
+                    break;
+                case "foul_charge_r":
+                    //foulcharge("r")
+                    break;
+                case "back_pass_l":
+                    //backPass("l");
+                    break;
+                case "back_pass_r":
+                    //backPass("l");
+                    break;
+                case "indirect_free_kick_l":
+                    //indirectFreeKick("l)");
+                    break;
+                case "indirect_free_kick_r":
+                    //indirectFreeKick("r)");
+                    break;
+                case "half_time":
+                    break;
+
+                case "time_over":
+                    //timeOver();
+                    krislet.bye();
+                    break;
+                default:
+                    // todo something?
+                    break;
+            }
+
+            //TurnActionIntoCommand()
+
+            //SendNextCommand()
             if (nextCommand != null) {
                 krislet.send("(" + nextCommand + ")");
-                //do the thing
             }
-
             // sleep one step to ensure that we will not send
             // two commands in one cycle.
             waitForNextCycle();
         }
-
-        // after kickoff
-        krislet.bye();
     }
 
-    private void updateCurrentObjective() {
+    private void UpdateObjective() {
         // offense
         // defense
         // can be extended later
     }
 
-    private void updateCurrentAction() {
+    private void UpdateCurrentAction() {
         // findObject(Object)
         // toTowards(Object
         // moveTowards(Object
         // moveBetween(object, object)
+        // distanceTo(object)
 		// skip()
-
     }
 
-    private void selectCommandForNextCycle() {
+    private void playOn(){
+
+        ball = memory.getBallInfo();
+
+        // If you don't know where is ball then find it
+        if (ball == null) {
+            nextCommand = "turn " + 90;
+            //findObject(ball);
+            return;
+        }
+
+        // Move towards ball
+        if (ball.m_distance > 1.5){
+            if( ball.m_direction != 0 ){
+                nextCommand = "turn " + ball.m_direction;
+            }
+            else
+                nextCommand = "dash " + 10 * ball.m_distance;
+        }
+        else {
+            //findGoal
+            if (goal_opponent == null) {
+                if (side == 'l') {
+                    goal_opponent = memory.getGoalObj('r');
+                } else {
+                    goal_opponent = memory.getGoalObj('l');
+                }
+                nextCommand = "turn " + 90;
+            }
+            else {
+                nextCommand = "kick " + 100 + " " + 45; //goal_opponent.m_direction;
+            }
+        }
     }
 
     private void setupFormation() {
-        //todo if startingCoordinate is on the wrong side of the field, mirrorCoordinate()
-        krislet.send("(move " + startingCoordinate.getX() + " " + startingCoordinate.getY() + ")");
-
-
-        // TODO: skal slettes
-        /*
-        // Place player randomly on field TODO: change
-        if (Pattern.matches("^before_kick_off.*", playMode)) {
-            krislet.move(-Math.random() * 52.5, 34 - Math.random() * 68.0);
-            //krislet.move(-20, -20); //TODO: line for controlling start position
+        if (playMode.equals("before_kick_off") ){
+            krislet.send("(move " + startingCoordinate.getX() + " " + startingCoordinate.getY() + ")");
         }
-
-         */
-        //
-
-    }
-
-    private void findObject(ObjectInfo obj) {
-        krislet.turn(40);
-        memory.waitForNewInfo(); // todo maybe remove. should only be called in memory
-    }
-
-    private void turnTowards(ObjectInfo obj) {
-        krislet.turn(obj.m_direction);
     }
 
     private void waitForNextCycle() {
@@ -171,59 +220,58 @@ class Brain extends Thread {
         }
     }
 
-    private void boerneFodbold(){
-        ball = memory.getBallInfo(); // måske rykkes ud som en fast variabel
-        if (ball == null) {
-            // If you don't know where is ball then find it
-            findObject(ball);
-        } else if (ball.m_distance > 1.0) {
-            // If ball is too far then turn to ball or
-            // if we have correct direction then go to ball
-            if (ball.m_direction != 0) {
-                turnTowards(ball);
-            } else {
-                nextCommand = "dash " + 10 * ball.m_distance;
-                //krislet.dash(10 * ball.m_distance);
-            }
-        } else {
-            // We know where the ball is and we can kick it
-            // so look for goal
-            if (side == 'l') {
-                goal_opponent = memory.getGoalObj('r');
-            } else {
-                goal_opponent = memory.getGoalObj('l');
-            }
+    /*
+        private void findObject(ObjectInfo obj) {
+        krislet.turn(40);
+        memory.waitForNewInfo(); // todo maybe remove. should only be called in memory
+    }*/
 
-            if (goal_opponent == null) {
-                findObject(goal_opponent); // giver ingen mening med null
-            } else {
-                nextCommand = "kick 100 " + goal_opponent.m_direction;
-                //krislet.kick(100, goal_opponent.m_direction);
-            }
+    private void UpdatePosition() {
+        double[] result = playerPhysicalEstimator.getPlayerPosition(memory.getFlagInfoList());
+        if(result != null)
+            System.out.println(Math.floor(result[0]) + " " + Math.floor(result[1]));
+        if(result != null){ //TODO should we use last known? Or acknowledge that we dont know?
+            currentPosition = result;
         }
     }
 
+    private void UpdateDirection(){
+        if(currentPosition == null){
+            return;
+        }
 
+        Point2D.Double result = playerPhysicalEstimator.getPlayerLookingDirection(memory.getFlagInfoList(), currentPosition);
+        //System.out.println(result);
+        if(result != null){ //TODO should we use last known? Or acknowledge that we dont know?
+            lookingDirectionVector = result;
+        }
+        //System.out.println("Looking direction: " + Math.floor(lookingDirectionVector.x) + " " + Math.floor(lookingDirectionVector.y));
+    }
 
+    public void printCurrentPosition(){
+        if (currentPosition != null){
+            System.out.println(currentPosition[0] + " " + currentPosition[1]);
+        } else {
+            System.out.println("Player pos not found!");
+        }
+    }
 
-    /// TODO: check if used
-
-    //---------------------------------------------------------------------------
     // This function sends see information
     public void see(VisualInfo info) {
         memory.store(info);
     }
 
-    //---------------------------------------------------------------------------
     // This function receives hear information from player
     public void hear(int time, int direction, String message) {
     }
 
-    //---------------------------------------------------------------------------
     // This function receives hear information from referee
     public void hear(int time, String message) {
+        playMode = message;
+
+        /*
         if (message.compareTo("time_over") == 0) {
             timeOver = true;
-        }
+        }*/
     }
 }

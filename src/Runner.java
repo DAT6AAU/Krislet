@@ -33,7 +33,7 @@ public class Runner {
         KrisletThread player10 = new KrisletThread(-51,33, teamName);
         KrisletThread player11 = new KrisletThread(-30,33, teamName);
 
-        player1.start();
+        player1.start();/*
         player2.start();
         player3.start();
         player4.start();
@@ -43,7 +43,7 @@ public class Runner {
         player8.start();
         player9.start();
         player10.start();
-        player11.start();
+        player11.start();*/
     }
 }
 
