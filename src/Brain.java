@@ -8,6 +8,7 @@
 //    Modified by:      Edgar Acosta
 //    Date:             March 4, 2008
 
+import objects.FlagInfo;
 import objects.ObjectInfo;
 
 import java.awt.geom.Point2D;
@@ -25,6 +26,7 @@ class Brain extends Thread {
     private Point2D.Double startingCoordinate;
     public double headAngle = 0;
     double[] currentPosition;
+    public Point2D.Double lookingDirectionVector;
 
     ObjectInfo ball; //todo can maybe be deleted
     ObjectInfo goal_opponent; //todo can maybe be deleted
@@ -36,6 +38,7 @@ class Brain extends Thread {
 
 
     private MathTest mathTest = new MathTest();
+    private static Movement movement;
 
 
     public Brain(Krislet krislet, char side, int number, String playMode, Point2D.Double startingCoordinate) {
@@ -48,6 +51,8 @@ class Brain extends Thread {
         this.playMode = playMode;
 
         this.startingCoordinate = startingCoordinate;
+
+        movement = new Movement(this, mathTest);
 
         start();
     }
@@ -63,14 +68,13 @@ class Brain extends Thread {
     public void run() {
         while (true){
             // TODO for Testing. Be kind, Delete.
-            System.out.println(playMode);
 
             // reset command to make sure not to resend last command even if action is complete.
             nextCommand = null;
 
             //UpdatePosition();
             currentPosition = mathTest.getPlayerPosition(memory.getFlagInfoList());
-            
+
             //UpdateDirection();
 
             UpdateObjective();
@@ -143,7 +147,6 @@ class Brain extends Thread {
                 krislet.send("(" + nextCommand + ")");
                 //do the thing
             }
-
             // sleep one step to ensure that we will not send
             // two commands in one cycle.
             waitForNextCycle();
@@ -220,6 +223,28 @@ class Brain extends Thread {
     }
     */
 
+    private void UpdatePosition() {
+
+        double[] result = mathTest.getPlayerPosition(memory.getFlagInfoList());
+        if(result != null)
+            System.out.println(Math.floor(result[0]) + " " + Math.floor(result[1]));
+        if(result != null){ //TODO should we use last known? Or acknowledge that we dont know?
+            currentPosition = result;
+        }
+    }
+
+    private void updateDirection(){
+        if(currentPosition == null){
+            return;
+        }
+
+        Point2D.Double result = mathTest.getPlayerLookingDirection(memory.getFlagInfoList(), currentPosition);
+        //System.out.println(result);
+        if(result != null){ //TODO should we use last known? Or acknowledge that we dont know?
+            lookingDirectionVector = result;
+        }
+        //System.out.println("Looking direction: " + Math.floor(lookingDirectionVector.x) + " " + Math.floor(lookingDirectionVector.y));
+    }
 
     public void printCurrentPosition(){
         if (currentPosition != null){
