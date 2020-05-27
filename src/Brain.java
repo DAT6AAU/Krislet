@@ -7,19 +7,21 @@
 
 //    Modified by:      Edgar Acosta
 //    Date:             March 4, 2008
-
-import objects.ObjectInfo;
+//    Modified by:      Mikkel Kuntz & Jon theis Nilsson
+//    Date:             2020-05-27
 
 import java.awt.geom.Point2D;
 import java.lang.Math;
+
+import objects.ObjectInfo;
 
 class Brain extends Thread {
     private Krislet krislet; // robot which is controlled by this brain
     private Memory memory; // place where all information is stored
     private static Movement movement;
     private char side;
-    volatile private boolean timeOver; // todo kan slettes??
-    private String playMode;
+    volatile private boolean timeOver;
+    private String playMode; // todo change to enum?
 
     private int playerNumber;
     private Point2D.Double startingCoordinate;
@@ -27,15 +29,15 @@ class Brain extends Thread {
     double[] currentPosition;
     public Point2D.Double lookingDirectionVector;
 
-    String nextCommand; // todo maybe an enum?
+    String nextCommand; // todo change to enum?
 
     String currentAction;
     boolean isCurrentActionComplete;
 
     private PlayerPhysicalEstimator playerPhysicalEstimator = new PlayerPhysicalEstimator();    
 
-    ObjectInfo ball; //todo can maybe be deleted
-    ObjectInfo goal_opponent; //todo can maybe be deleted
+    ObjectInfo ball;
+    ObjectInfo goal_opponent;
 
 
     public Brain(Krislet krislet, char side, int number, String playMode, Point2D.Double startingCoordinate) {
@@ -65,12 +67,10 @@ class Brain extends Thread {
 
     public void run() {
         while (true){
-            // TODO for Testing. Be kind, Delete.
+            // for testing
             if (playerNumber == 1){
                 System.out.println(playMode);
             }
-
-            // TODO: Please stop deleting.
 
             // reset command to make sure not to resend last command even if action is complete.
             nextCommand = null;
@@ -81,70 +81,9 @@ class Brain extends Thread {
 
             UpdateObjective();
 
-            //UpdateCurrentAction(); // Maybe this is updated in switch.
-            switch (playMode){
-                case "before_kick_off":
-                    setupFormation();
-                    //beforeKickOff();
-                    break;
-                case "kick_off_l":
-                    //kickOff_l("l")
-                    break;
-                case "kick_off_r":
-                    //kickOff("r");
-                    break;
-                case "play_on":
-                    playOn();
-                    break;
-                case "kick_in_l":
-                    //kickIn("l");
-                    break;
-                case "kick_in_r":
-                    //kickIn("r");
-                    break;
-                case "corner_kick_l":
-                    //cornerKick("l");
-                    break;
-                case "corner_kick_r":
-                    //cornerKick("r");
-                    break;
-                case "goal_kick_l":
-                    //goalKick("l");
-                    break;
-                case "goal_kick_r":
-                    //goalKick("r");
-                    break;
-                case "foul_charge_l":
-                    //foulCharge("l");
-                    break;
-                case "foul_charge_r":
-                    //foulcharge("r")
-                    break;
-                case "back_pass_l":
-                    //backPass("l");
-                    break;
-                case "back_pass_r":
-                    //backPass("l");
-                    break;
-                case "indirect_free_kick_l":
-                    //indirectFreeKick("l)");
-                    break;
-                case "indirect_free_kick_r":
-                    //indirectFreeKick("r)");
-                    break;
-                case "half_time":
-                    break;
+            UpdateCurrentAction();
 
-                case "time_over":
-                    //timeOver();
-                    krislet.bye();
-                    break;
-                default:
-                    // todo something?
-                    break;
-            }
-
-            //TurnActionIntoCommand()
+            //TurnActionIntoCommand() //incorporated in play_on for now
 
             //SendNextCommand()
             if (nextCommand != null) {
@@ -163,6 +102,67 @@ class Brain extends Thread {
     }
 
     private void UpdateCurrentAction() {
+        switch (playMode){
+            case "before_kick_off":
+                setupFormation();
+                //beforeKickOff();
+                break;
+            case "kick_off_l":
+                //kickOff_l("l")
+                break;
+            case "kick_off_r":
+                //kickOff("r");
+                break;
+            case "play_on":
+                playOn();
+                break;
+            case "kick_in_l":
+                //kickIn("l");
+                break;
+            case "kick_in_r":
+                //kickIn("r");
+                break;
+            case "corner_kick_l":
+                //cornerKick("l");
+                break;
+            case "corner_kick_r":
+                //cornerKick("r");
+                break;
+            case "goal_kick_l":
+                //goalKick("l");
+                break;
+            case "goal_kick_r":
+                //goalKick("r");
+                break;
+            case "foul_charge_l":
+                //foulCharge("l");
+                break;
+            case "foul_charge_r":
+                //foulcharge("r")
+                break;
+            case "back_pass_l":
+                //backPass("l");
+                break;
+            case "back_pass_r":
+                //backPass("l");
+                break;
+            case "indirect_free_kick_l":
+                //indirectFreeKick("l)");
+                break;
+            case "indirect_free_kick_r":
+                //indirectFreeKick("r)");
+                break;
+            case "half_time":
+                break;
+
+            case "time_over":
+                //timeOver();
+                krislet.bye();
+                break;
+            default:
+                //
+                break;
+        }
         // findObject(Object)
         // toTowards(Object
         // moveTowards(Object
@@ -228,21 +228,21 @@ class Brain extends Thread {
 
     private void UpdatePosition() {
         double[] result = playerPhysicalEstimator.getPlayerPosition(memory.getFlagInfoList());
-        if(result != null)
+        if (result != null)
             System.out.println(Math.floor(result[0]) + " " + Math.floor(result[1]));
-        if(result != null){ //TODO should we use last known? Or acknowledge that we dont know?
+        if (result != null){ //TODO should we use last known? Or acknowledge that we dont know?
             currentPosition = result;
         }
     }
 
     private void UpdateDirection(){
-        if(currentPosition == null){
+        if (currentPosition == null){
             return;
         }
 
         Point2D.Double result = playerPhysicalEstimator.getPlayerLookingDirection(memory.getFlagInfoList(), currentPosition);
         //System.out.println(result);
-        if(result != null){ //TODO should we use last known? Or acknowledge that we dont know?
+        if (result != null){ //TODO should we use last known? Or acknowledge that we dont know?
             lookingDirectionVector = result;
         }
         //System.out.println("Looking direction: " + Math.floor(lookingDirectionVector.x) + " " + Math.floor(lookingDirectionVector.y));

@@ -8,7 +8,7 @@ public class PlayerInfo extends ObjectInfo {
     private boolean m_goalie = false;
 
     public PlayerInfo() {
-        super(ObjectType.PLAYER);
+        super (ObjectType.PLAYER);
     }
 
     public PlayerInfo(String team, int number, boolean is_goalie) {

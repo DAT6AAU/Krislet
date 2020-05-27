@@ -4,13 +4,13 @@ public class GoalInfo extends ObjectInfo{
     private char m_side;
 
     public GoalInfo() {
-        super(ObjectType.GOAL);
+        super (ObjectType.GOAL);
         m_side = ' ';
     }
 
     public GoalInfo(char side) {
         //super("goal " + side); //TODO MAKE SURE WORKS
-        super(ObjectType.FLAG);
+        super (ObjectType.FLAG);
         m_side = side;
     }
 

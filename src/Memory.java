@@ -58,7 +58,6 @@ class Memory {
         return new ArrayList<>(info.getFlagList()); //TODO Maybe just store it as arraylist instead of vector?
     }
 
-    //---------------------------------------------------------------------------
     // This function waits for new visual information
     public void waitForNewInfo() {
         // first remove old info

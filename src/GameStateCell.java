@@ -1,6 +1,6 @@
-import objects.ObjectInfo;
-
 import java.util.ArrayList;
+
+import objects.ObjectInfo;
 
 public class GameStateCell {
 

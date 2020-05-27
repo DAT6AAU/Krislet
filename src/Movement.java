@@ -20,14 +20,14 @@ public class Movement {
     //returns true if at coordinate
     //public boolean moveTo(Object)
     public boolean moveTo(double destX, double destY){
-        if(isAtPosition(destX, destY)){
+        if (isAtPosition(destX, destY)){
             System.out.println("Is at position!");
             currentAction = ActionType.NOTHING;
             currentAction.amount = 0;
             return true;
         }
 
-        if(isLookingAt(destX, destY)){ //TODO
+        if (isLookingAt(destX, destY)){ //TODO
             //move foward //TODO
             System.out.println("Is not at pos, but looking at pos!");
             currentAction = ActionType.MOVE_FORWARD;

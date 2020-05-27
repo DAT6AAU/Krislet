@@ -8,7 +8,7 @@ public class LineInfo extends ObjectInfo {
     }
 
     public LineInfo(char kind) {
-        super(ObjectType.LINE);
+        super (ObjectType.LINE);
         m_kind = kind;
     }
 }

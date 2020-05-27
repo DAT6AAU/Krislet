@@ -1,10 +1,4 @@
-//import javafx.util.Pair;
-
-import java.util.ArrayList;
-
-import objects.BallInfo;
 import objects.ObjectInfo;
-import objects.ObjectType;
 
 import utilities.PairGeneric;
 

@@ -7,6 +7,9 @@
 //      Updated:               2008/03/01
 //      By:               Edgar Acosta
 //
+//      Updated:                2020-05-27
+//      By: Mikkel Kuntz & Jon theis Nilsson
+//
 //********************************************
 
 import java.io.*;
@@ -41,7 +44,6 @@ class Krislet {
         this.port = port;
         this.teamName = teamName;
         this.playing = true;
-
         this.startingCoordinate = startingCoordinate;
     }
 
@@ -105,7 +107,7 @@ class Krislet {
             throw new IOException(message);
         }
         if (m.group(1).compareTo("see") == 0) {
-            if(message.startsWith("(see 0)")){ //Temporary fix //Do not know why this happens.
+            if (message.startsWith("(see 0)")){ //Temporary fix //Do not know why this happens.
                 return;
             }
             VisualInfo info = new VisualInfo(message);
@@ -113,7 +115,7 @@ class Krislet {
             brain.see(info);
         } else if (m.group(1).compareTo("hear") == 0) {
             parseHear(message);
-        } else if(m.group(1).compareTo("sense_body") == 0){
+        } else if (m.group(1).compareTo("sense_body") == 0){
             parseSenseBody(message);
         }
     }
@@ -124,8 +126,8 @@ class Krislet {
 
     private double parseHeadAngle(String message){
         String[] splitString = message.split(" ");
-        for(int i = 0; i < splitString.length; i++){
-            if(splitString[i].compareTo("(head_angle") == 0){
+        for (int i = 0; i < splitString.length; i++){
+            if (splitString[i].compareTo("(head_angle") == 0){
                 String headAngleValue = splitString[i+1];
                 return Double.parseDouble(headAngleValue.substring(0, headAngleValue.length() - 1));
             }

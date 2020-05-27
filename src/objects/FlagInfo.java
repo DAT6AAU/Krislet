@@ -26,23 +26,23 @@ public class FlagInfo extends ObjectInfo {
     }
 
     public boolean isEqualTo(FlagInfo other){
-        if(m_type != other.getM_type()){
+        if (m_type != other.getM_type()){
             return false;
         }
 
-        if(m_pos1 != other.getM_pos1()){
+        if (m_pos1 != other.getM_pos1()){
             return false;
         }
 
-        if(m_pos2 != other.getM_pos2()){
+        if (m_pos2 != other.getM_pos2()){
             return false;
         }
 
-        if(m_num != other.getM_num()){
+        if (m_num != other.getM_num()){
             return false;
         }
 
-        if(m_out != other.isM_out()){
+        if (m_out != other.isM_out()){
             return false;
         }
 

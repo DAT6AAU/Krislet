@@ -7,19 +7,11 @@ public class Runner {
     public static void main(String[] args) throws IOException {
 
         String teamName;
-        if(args.length == 1){
+        if (args.length == 1){
             teamName = args[0];
-        }else{
+        } else {
             teamName = "Krislet";
         }
-
-        /*
-        int numberOfPlayers = 1; //Default 11 //TODO Change back!
-
-        for (int i = 0; i < numberOfPlayers; i++) {
-            KrisletThread player = new KrisletThread(-20,-20);
-            player.start();
-        }*/
 
         KrisletThread player1 = new KrisletThread(-1,-33, teamName);
         KrisletThread player2 = new KrisletThread(-1,-5, teamName);
@@ -33,7 +25,7 @@ public class Runner {
         KrisletThread player10 = new KrisletThread(-51,33, teamName);
         KrisletThread player11 = new KrisletThread(-30,33, teamName);
 
-        player1.start();/*
+        player1.start();
         player2.start();
         player3.start();
         player4.start();
@@ -43,7 +35,7 @@ public class Runner {
         player8.start();
         player9.start();
         player10.start();
-        player11.start();*/
+        player11.start();
     }
 }
 

@@ -56,8 +56,7 @@ public class PlayerPhysicalEstimator {
         hardcodedFlags.add(new HardcodedFlag(' ', 'c', 'b', 0, false, new double[]{0, 34}));
         hardcodedFlags.add(new HardcodedFlag(' ', 'c', ' ', 0, false, new double[]{0, 0}));
 
-
-        //Boundry flags
+        //Boundary flags
         //Left
         hardcodedFlags.add(new HardcodedFlag(' ', 'l', 't', 30, false, new double[]{-58, 30}));
         hardcodedFlags.add(new HardcodedFlag(' ', 'l', 't', 20, false, new double[]{-58, 20}));
@@ -155,7 +154,7 @@ public class PlayerPhysicalEstimator {
         boolean posOneOutOfBounds = isCoordinateOutOfBounds(positionPossibilityOne);
         boolean posTwoOutOfBounds = isCoordinateOutOfBounds(positionPossibilityTwo);
 
-        //Both coords out of bounds?
+        //Both coordinates are out of bounds?
         if(posOneOutOfBounds && posTwoOutOfBounds){
             if(printGetPosDebugMsgs){
                 System.out.println("Pos 1: " + positionPossibilityOne[0] + " " + positionPossibilityOne[1]);
@@ -166,7 +165,7 @@ public class PlayerPhysicalEstimator {
             return null; //Both coordinates are out of bounds
         }
 
-        //Is both coords inside bounds? Then use triangulation //Intersection with third point
+        //Is both coordinates inside bounds? Then use triangulation //Intersection with third point
         if(!posOneOutOfBounds && !posTwoOutOfBounds){
             double distFromPlayerToThirdFlag = chosenFlags.get(2).getFirst().m_distance;
             double distFromPossibilityOneToThirdFlag = distBetweenCoords(positionPossibilityOne[0], positionPossibilityOne[1],
@@ -193,12 +192,12 @@ public class PlayerPhysicalEstimator {
         }
 
         //Which coordinate is inside of bounds?
-        if(posOneOutOfBounds){
-            if(printGetPosDebugMsgs){
+        if (posOneOutOfBounds){
+            if (printGetPosDebugMsgs){
                 System.out.println("getPos: pos one is OOB, returning pos two.");
             }
             return positionPossibilityTwo;
-        }else{
+        } else {
             if(printGetPosDebugMsgs){
                 System.out.println("getPos: pos two is OOB, returning pos one.");
             }
@@ -209,8 +208,8 @@ public class PlayerPhysicalEstimator {
     /** Returns a list with all flags from given list which are below or at the distance given. */
     private ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> removeFlagsOverDist(double maxDistAllowed, ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> flags){
         ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> acceptedFlags = new ArrayList<>();
-        for(PairGeneric<FlagInfo, HardcodedFlag> flag : flags){
-            if(flag.getFirst().m_distance <= maxDistAllowed){
+        for (PairGeneric<FlagInfo, HardcodedFlag> flag : flags){
+            if (flag.getFirst().m_distance <= maxDistAllowed){
                 acceptedFlags.add(flag);
             }
         }
@@ -221,9 +220,9 @@ public class PlayerPhysicalEstimator {
     /** Returns a pair for each given flag consisting of that flag and the matching hardcoded one. */
     private ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> getHardcodedFlagsThatPlayerSees(ArrayList<FlagInfo> flagSeeObjects){
         ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> flagsPlayerSees = new ArrayList<>();
-        for(FlagInfo flagInfoSee : flagSeeObjects){
-            for(HardcodedFlag hardcodedFlag : hardcodedFlags){
-                if(flagInfoSee.isEqualTo(hardcodedFlag)){
+        for (FlagInfo flagInfoSee : flagSeeObjects){
+            for (HardcodedFlag hardcodedFlag : hardcodedFlags){
+                if (flagInfoSee.isEqualTo(hardcodedFlag)){
                     flagsPlayerSees.add(new PairGeneric<>(flagInfoSee, hardcodedFlag));
                 }
                 /*
@@ -242,11 +241,11 @@ public class PlayerPhysicalEstimator {
         final int maxAbsX = 53;
         final int maxAbsY = 35;
 
-        if(Math.abs(coordinate[0]) > maxAbsX){
+        if (Math.abs(coordinate[0]) > maxAbsX){
             return true;
         }
 
-        if(Math.abs(coordinate[1]) > maxAbsY) {
+        if (Math.abs(coordinate[1]) > maxAbsY) {
             return true;
         }
 
@@ -256,21 +255,21 @@ public class PlayerPhysicalEstimator {
     /** Takes a list of flag identifiers, finds the hardcoded flag with the same identifiers and returns its position.
      //TODO is this needed? */
     private double[] getPosOfFlagFromIdentifiers(HardcodedFlag givenFlag){
-        for(HardcodedFlag hardcodedFlag : hardcodedFlags){
+        for (HardcodedFlag hardcodedFlag : hardcodedFlags){
             String hardcodedFlagIdentifier = hardcodedFlag.getIdentifier();
-            if(hardcodedFlagIdentifier.length() != givenFlag.getIdentifier().length())
+            if (hardcodedFlagIdentifier.length() != givenFlag.getIdentifier().length())
                 continue;
 
             boolean isMatching = true;
-            for(int i = 0; i < givenFlag.getIdentifier().length(); i++){
+            for (int i = 0; i < givenFlag.getIdentifier().length(); i++){
 
-                if(hardcodedFlagIdentifier.equals(givenFlag.getIdentifier())){
+                if (hardcodedFlagIdentifier.equals(givenFlag.getIdentifier())){
                     isMatching = false;
                     break;
                 }
             }
 
-            if(isMatching){
+            if (isMatching){
                 return hardcodedFlag.position;
             }
         }
@@ -283,7 +282,7 @@ public class PlayerPhysicalEstimator {
     * These should be picked with a specific policy
     * TODO Improve to select closest flags? */
     private ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> pickThreeFlags(ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> givenFlags){
-        if(givenFlags.size() < 3){
+        if (givenFlags.size() < 3){
             return null;
             //throw new IllegalArgumentException("Error choosing three flags. Given list only contains amount of flags: " + givenFlags.size());
         }
@@ -292,18 +291,18 @@ public class PlayerPhysicalEstimator {
         PairGeneric<FlagInfo, HardcodedFlag> chosenFlagTwo = null;
         PairGeneric<FlagInfo, HardcodedFlag> chosenFlagThree = null;
 
-        for(PairGeneric<FlagInfo, HardcodedFlag> flag : givenFlags){
-            if(chosenFlagOne == null){
+        for (PairGeneric<FlagInfo, HardcodedFlag> flag : givenFlags){
+            if (chosenFlagOne == null){
                 chosenFlagOne = flag;
-            }else if(chosenFlagTwo == null){
+            } else if (chosenFlagTwo == null){
                 chosenFlagTwo = flag;
-            }else if(chosenFlagThree == null){
+            } else if (chosenFlagThree == null){
                 chosenFlagThree = flag;
-            }else if(chosenFlagOne.getFirst().m_distance > flag.getFirst().m_distance){
+            } else if (chosenFlagOne.getFirst().m_distance > flag.getFirst().m_distance){
                 chosenFlagOne = flag;
-            }else if(chosenFlagTwo.getFirst().m_distance > flag.getFirst().m_distance){
+            } else if (chosenFlagTwo.getFirst().m_distance > flag.getFirst().m_distance){
                 chosenFlagTwo = flag;
-            }else if(chosenFlagThree.getFirst().m_distance > flag.getFirst().m_distance){
+            } else if (chosenFlagThree.getFirst().m_distance > flag.getFirst().m_distance){
                 chosenFlagThree = flag;
             }
         }
@@ -324,17 +323,17 @@ public class PlayerPhysicalEstimator {
         double d = Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
 
         // non intersecting
-        if(d > r0 + r1){
+        if (d > r0 + r1){
             return null;
         }
 
         // One circle within other
-        if(d < Math.abs(r0 - r1)){
+        if (d < Math.abs(r0 - r1)){
             return null;
         }
 
         // coincident circles
-        if(d == 0 && r0 == r1){
+        if (d == 0 && r0 == r1){
             return null;
         }
 
@@ -355,7 +354,7 @@ public class PlayerPhysicalEstimator {
     public Point2D.Double getPlayerLookingDirection(ArrayList<FlagInfo> flagSeeObjects,double[] myPosition){
         //Find hardcoded object that i can see
         ArrayList<PairGeneric<FlagInfo, HardcodedFlag>> flagsPlayerSees = getHardcodedFlagsThatPlayerSees(flagSeeObjects);
-        if(flagsPlayerSees.size() < 3){
+        if (flagsPlayerSees.size() < 3){
             return null;
         }
 
